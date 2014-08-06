@@ -1,0 +1,42 @@
+icons:
+  -
+    fileName: timeomat.js
+    targets:
+      - {}
+  -
+    fileName: clock.js
+    targets:
+      - {}
+      -
+        scale: 0.5
+  -
+    fileName: alarm.js
+    targets:
+      - {}
+      -
+        scale: 0.5
+  -
+    fileName: stopwatch.js
+    targets:
+      - {}
+      -
+        scale: 0.5
+  -
+    fileName: timer.js
+    targets:
+      - {}
+      -
+        scale: 0.5
+  -
+    fileName: worldclock.js
+    targets:
+      - {}
+      -
+        scale: 0.5
+  -
+    fileName: countdown.js
+    targets:
+      - {}
+      -
+        scale: 0.5
+

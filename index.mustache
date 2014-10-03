@@ -17,9 +17,29 @@
 			background-color: rgb(200, 200, 200);
 		}
 
+		#wrapper {
+			padding: 1em 2em
+		}
+
+		header {
+			margin-bottom: 2em;
+		}
+
+		#logo {
+			display: inline-block;
+			margin-right: 2em;
+		}
+
+		button {
+			padding: 0.2em 1em;
+			border: 1px solid gray;
+			border-radius: 0.2em;
+			cursor: pointer;
+		}
+
 		.icon {
 			display: inline-block;
-			margin: 1em;
+			margin: 0 1em 1em 0;
 			min-height: 200px;
 			min-width: 150px;
 			border: 1px solid white;
@@ -29,8 +49,7 @@
 
 		.icon svg {
 			background-color: white;
-			background-image:
-			linear-gradient(45deg, #DDD 25%, transparent 25%, transparent 75%, #DDD 75%, #DDD 100%),
+			background-image: linear-gradient(45deg, #DDD 25%, transparent 25%, transparent 75%, #DDD 75%, #DDD 100%),
 			linear-gradient(45deg, #DDD 25%, transparent 25%, transparent 75%, #DDD 75%, #DDD 100%);
 			background-size: 20px 20px;
 			background-position: 0 0, 10px 10px;
@@ -39,15 +58,20 @@
 </head>
 <body>
 
-<header>
-	<nav>
-		<h1>Icons</h1>
-	</nav>
-</header>
+<div id="wrapper">
+
+	<header>
+		<nav>
+			<h1 id="logo">Icons</h1>
+			<button id="toggleGrid">Grid</button>
+		</nav>
+	</header>
 
 
-<div id="icons">
-	{{content}}
+	<div id="icons">
+		{{content}}
+	</div>
+
 </div>
 
 <script>
@@ -55,13 +79,54 @@
 </script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-	var socket = io('http://localhost')
+
+	var socket = io('http://localhost'),
+	    gridVisibility = false
 
 	socket.on('icon', function (data) {
 		var iconContainer = document.querySelector('#' + data.fileName)
 
 		iconContainer.innerHTML = data.content
 	})
+
+	function toggleGrid () {
+
+		var svgs = document.querySelectorAll('svg'),
+		    gridContainers,
+		    i
+
+		if (gridVisibility) {
+
+			gridContainers = document.querySelectorAll('svg .grid')
+
+			for (i = 0; i < gridContainers.length; i++)
+				gridContainers[i].remove()
+
+			gridVisibility = false
+		}
+		else {
+			for (i = 0; i < svgs.length; i++) {
+				shaven([svgs[i],
+					['g.grid', {
+						style: 'fill: rgb(255,255,200);' +
+						       'stroke: red;' +
+						       'stroke-width: 1'},
+						['line', {x1: 0, y1: -100, x2: 0, y2: 100}],
+						['line', {x1: -100, y1: 0, x2: 100, y2: 0}],
+					]
+				], 'http://www.w3.org/2000/svg')
+			}
+
+			gridVisibility = true
+		}
+	}
+
+	document
+			.querySelector('#toggleGrid')
+			.addEventListener('click', function (event) {
+				toggleGrid()
+			})
+
 </script>
 </body>
 </html>

@@ -52,20 +52,22 @@ module.exports = function (grunt) {
 		'Writes SVG files to build directory',
 		function () {
 
-			var deployment = yaml.safeLoad(grunt.file.read('./deployment.yaml'))
+			var deployment = yaml.safeLoad(grunt.file.read('./icons/deployment.yaml'))
 
 
 			if (deployment)
 				deployment.icons.forEach(function (icon) {
 
-					var iconModule = require(__dirname + '/icons/' + icon.fileName)
+					var iconModule = require(__dirname + '/icons/' + icon.fileName),
+					    returnValue = iconModule()
 
 					icon.targets.forEach(function (targetData, index) {
 
 						var fileName,
 						    scale = targetData.scale ?
 						            '@' + targetData.scale :
-						            ''
+						            '',
+						    svgString
 
 						fileName = icon.fileName
 							.replace(/\.js$/i, scale + '.svg')
@@ -73,9 +75,13 @@ module.exports = function (grunt) {
 
 						grunt.log.write('Write icon', fileName, '… ')
 
+						if (typeof returnValue !== 'string')
+							returnValue = shaven(clone(iconModule(targetData)))[0]
+
+
 						grunt.file.write(
 							('./build/svg/' + fileName),
-							formatSvg(shaven(clone(iconModule(targetData)))[0])
+							formatSvg(returnValue)
 						)
 
 						grunt.log.ok()

@@ -3,6 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<title>SvgScript</title>
+	<meta name=viewport
+	      content="initial-scale=0.5, minimum-scale=0.5">
+
 	<style type="text/css">
 
 		* {
@@ -14,7 +17,7 @@
 
 		body {
 			font-family: arial, sans-serif;
-			background-color: rgb(200, 200, 200);
+			background-color: rgb(180, 180, 180);
 		}
 
 		#wrapper {
@@ -40,11 +43,10 @@
 		.icon {
 			display: inline-block;
 			margin: 0 1em 1em 0;
-			min-height: 200px;
-			min-width: 150px;
-			border: 1px solid white;
+			border: 1px solid rgb(200, 200, 200);
 			vertical-align: top;
 			padding: 1em;
+			background-color: rgb(190, 190, 190);
 		}
 
 		.icon svg {
@@ -106,15 +108,57 @@
 		}
 		else {
 			for (i = 0; i < svgs.length; i++) {
-				shaven([svgs[i],
-					['g.grid', {
-						style: 'fill: rgb(255,255,200);' +
-						       'stroke: red;' +
-						       'stroke-width: 1'},
-						['line', {x1: 0, y1: -100, x2: 0, y2: 100}],
-						['line', {x1: -100, y1: 0, x2: 100, y2: 0}],
-					]
-				], 'http://www.w3.org/2000/svg')
+				!function () {
+
+					var gridFragment = ['g.grid', {
+						    style: {
+							    fill: 'rgb(255, 255, 200)',
+							    stroke: 'red',
+							    'stroke-width': 0.1}},
+						    ['line', {
+							    style: {
+								    'stroke-width': 1},
+							    x1: 0,
+							    y1: -100,
+							    x2: 0,
+							    y2: 100}
+						    ],
+						    ['line', {
+							    style: {
+								    'stroke-width': 1},
+							    x1: -100,
+							    y1: 0,
+							    x2: 100,
+							    y2: 0}
+						    ]
+					    ],
+					    lines = [],
+					    a
+
+					// Horizontal lines
+					for (a = 0; a < 200; a++)
+						lines.push(
+								['line', {
+									x1: -100 + a,
+									y1: -100,
+									x2: -100 + a,
+									y2: 100}]
+						)
+
+
+					// Vertical lines
+					for (a = 0; a < 200; a++)
+						lines.push(
+								['line', {
+									x1: -100,
+									y1: -100 + a,
+									x2: 100,
+									y2: -100 + a}]
+						)
+
+
+					shaven([svgs[i], gridFragment.concat(lines)], 'http://www.w3.org/2000/svg')
+				}()
 			}
 
 			gridVisibility = true

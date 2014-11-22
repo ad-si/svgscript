@@ -1,4 +1,4 @@
-// Shaven 0.4.0 by Adrian Sieber (adriansieber.com)
+// Shaven 0.6.0 by Adrian Sieber (adriansieber.com)
 
 
 // array: Array containing the DOM fragment in JsonML
@@ -11,8 +11,9 @@ shaven = function dom (array, namespace, returnObject) {
 	var doc = document,
 	    unescaped,
 	    callback,
-	    attribute,
+	    attributeKey,
 	    i
+
 
 	// Set on first iteration
 	returnObject = returnObject || {}
@@ -30,6 +31,7 @@ shaven = function dom (array, namespace, returnObject) {
 		    ref = sugarString.match(/\$([\w-]+)/),
 		    classNames = sugarString.match(/\.[\w-]+/g)
 
+
 		// Assign id if is set
 		if (id) {
 
@@ -45,7 +47,10 @@ shaven = function dom (array, namespace, returnObject) {
 
 		// Assign class if is set
 		if (classNames)
-			element.setAttribute('class', classNames.join(' ').replace(/\./g, ''))
+			element.setAttribute(
+				'class',
+				classNames.join(' ').replace(/\./g, '')
+			)
 
 		// Don't escape HTML content
 		if (sugarString.match(/&$/g))
@@ -53,6 +58,13 @@ shaven = function dom (array, namespace, returnObject) {
 
 		// Return DOM element
 		return element
+	}
+
+	function replacer (key, value) {
+		if (typeof value !== 'string' && typeof value !== 'object')
+			return String(value)
+		else
+			return value
 	}
 
 	// TODO: Create customised renderer
@@ -106,21 +118,49 @@ shaven = function dom (array, namespace, returnObject) {
 			array[0].appendChild(array[i])
 
 		// Else must be an object with attributes
-		else if (typeof array[i] === 'object')
-		// For each attribute
-			for (attribute in array[i])
-				if (array[i].hasOwnProperty(attribute))
-					array[0].setAttribute(attribute, array[i][attribute])
+		else if (typeof array[i] === 'object') {
+			// For each attribute
+			for (attributeKey in array[i])
+				if (array[i].hasOwnProperty(attributeKey)) {
 
-				else
-					throw new TypeError('"' + array[i] + '" is not allowed as a value.')
+					if (array[i][attributeKey] !== null &&
+					    array[i][attributeKey] !== false)
+						if (array[i][attributeKey] === undefined)
+							array[0].setAttribute(attributeKey, '')
+
+						else {
+
+							console.log(attributeKey)
+
+							if (attributeKey === 'style' &&
+							    typeof array[i][attributeKey] === 'object')
+								array[0].setAttribute(
+									attributeKey,
+									JSON
+										.stringify(array[i][attributeKey], replacer)
+										.slice(2, -2)
+										.replace(/","/g, ';')
+										.replace(/":"/g, ':')
+										.replace(/\\"/g, '\'')
+								)
+							else
+								array[0].setAttribute(
+									attributeKey,
+									array[i][attributeKey]
+								)
+						}
+				}
+		}
+		else
+			throw new TypeError('"' + array[i] + '" is not allowed as a value.')
 	}
 	// }
 
 	// Return root element on index 0
 	returnObject[0] = array[0]
 
-	if (callback) callback(array[0])
+	if (callback)
+		callback(array[0])
 
 	// returns object containing all elements with an id and the root element
 	return returnObject

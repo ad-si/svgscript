@@ -1,11 +1,11 @@
 var shaven = require('shaven'),
-    yaml = require('js-yaml'),
-    clone = require('clone')
+    yaml = require('js-yaml')
 
 
 module.exports = function (grunt) {
 
-	var icons = []
+	var icons = [],
+	    path = grunt.option('path')
 
 	function formatSvg (svgString) {
 
@@ -52,31 +52,41 @@ module.exports = function (grunt) {
 		'Writes SVG files to build directory',
 		function () {
 
-			var deployment = yaml.safeLoad(grunt.file.read('./icons/deployment.yaml'))
+			var deployment = yaml.safeLoad(grunt.file.read(path + '/deployment.yaml'))
 
 
 			if (deployment)
 				deployment.icons.forEach(function (icon) {
 
-					var iconModule = require(__dirname + '/icons/' + icon.fileName),
-					    returnValue = iconModule()
+					var iconModule = require(path + '/' + icon.fileName),
+					    returnType = typeof iconModule(),
+					    returnValue
 
 					icon.targets.forEach(function (targetData, index) {
 
 						var fileName,
-						    scale = targetData.scale ?
-						            '@' + targetData.scale :
-						            '',
-						    svgString
+						    scale = ''
 
-						fileName = icon.fileName
-							.replace(/\.js$/i, scale + '.svg')
+
+						if (targetData.scale > 0) {
+							scale = '@' + targetData.scale + 'x'
+							fileName = icon
+								.fileName
+								.replace(/\.js$/i, scale + '.svg')
+						}
+						else
+							fileName = icon
+								.fileName
+								.replace(/\.js$/i,
+									(index === 0 ? '' : index) + '.svg')
 
 
 						grunt.log.write('Write icon', fileName, '… ')
 
-						if (typeof returnValue !== 'string')
-							returnValue = shaven(clone(iconModule(targetData)))[0]
+						if (returnType !== 'string')
+							returnValue = shaven(iconModule(targetData))[0]
+						else
+							returnValue = iconModule(targetData)
 
 
 						grunt.file.write(
@@ -90,7 +100,7 @@ module.exports = function (grunt) {
 
 			else {
 				grunt.file.recurse(
-					'./icons',
+					path,
 					function (abspath, rootdir, subdir, filename) {
 
 						icons.push({

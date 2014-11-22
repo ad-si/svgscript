@@ -1,6 +1,6 @@
 {
   "name": "shaven",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "description": "Shaven is a simple DOM building utility and template engine based upon JsonML",
   "homepage": "http://adriansieber.com/shaven",
   "keywords": [
@@ -34,14 +34,14 @@
     "codemirror": "~3.22.0",
     "assert": "~0.0.2"
   },
-  "_release": "0.4.0",
+  "_release": "0.6.0",
   "_resolution": {
     "type": "version",
-    "tag": "v0.4.0",
-    "commit": "d0a154eb9badc107e37977d7b9a48ba103b820f1"
+    "tag": "v0.6.0",
+    "commit": "2a7139a5fef9adf155dd4dc58aef07538d06fbb5"
   },
   "_source": "git://github.com/adius/shaven.git",
-  "_target": "~0.4.0",
+  "_target": "~0.6.0",
   "_originalSource": "shaven",
   "_direct": true
 }

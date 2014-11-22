@@ -5,7 +5,7 @@ var shaven = require('shaven'),
     path = require('path'),
     chokidar = require('chokidar'),
     clone = require('clone'),
-    iconsDirectoryPath = __dirname + '/icons',
+    iconsDirectoryPath = __dirname + '/icons/educatopia',
     fileNames,
     //fileNames = fs.readdirSync(iconsDirectoryPath),
     watcher = chokidar.watch(
@@ -16,7 +16,7 @@ var shaven = require('shaven'),
 	    }
     ),
     shavenJs = fs.readFileSync(__dirname +
-                               '/bower_components/shaven/shaven.min.js'),
+                               '/bower_components/shaven/shaven.js'),
     indexHTML
 
 
@@ -29,11 +29,12 @@ function handler (req, res) {
 	indexHTML = String(indexHTML).replace('{{scripts}}', shavenJs)
 
 	if (req.url === '/favicon.ico')
-		res.writeHead(200)
+		res.writeHead(404)
 
-	else {
-		returnHTML = String(indexHTML)
-			.replace('{{content}}', getIcons()
+	else if (req.url === '/') {
+		returnHTML = String(indexHTML).replace(
+			'{{content}}',
+			getIcons()
 				.map(function (icon) {
 					return '<div class=icon id=' + icon.fileName + '>' +
 					       icon.content +
@@ -44,6 +45,19 @@ function handler (req, res) {
 
 		res.writeHead(200)
 		res.end(returnHTML)
+	}
+
+	// TODO: Single view of icons
+	/*else if () {
+		req.writeHead(200)
+		req.end(fs.readFileSync(req.url))
+	}
+	*/
+
+
+	else {
+		res.writeHead(404)
+		res.end(req.url + ' is not available!')
 	}
 }
 
@@ -60,6 +74,8 @@ function getIcons () {
 		.forEach(function (iconPath) {
 
 			iconPath = iconsDirectoryPath + '/' + iconPath
+
+
 
 			delete require.cache[require.resolve(iconPath)]
 

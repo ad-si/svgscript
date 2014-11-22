@@ -39,10 +39,18 @@ module.exports = function (grunt) {
 					}
 				]
 			}
+		},
+		nodewebkit: {
+			options: {
+				platforms: ['osx'],
+				buildDir: './webkitbuilds'
+			},
+			src: ['./public/**/*']
 		}
 	})
 
 	grunt.loadNpmTasks('grunt-svg2png')
+	grunt.loadNpmTasks('grunt-node-webkit-builder')
 
 
 	grunt.registerTask('default', ['svg', 'png'])
@@ -130,5 +138,11 @@ module.exports = function (grunt) {
 		'png',
 		'Converts SVG files to PNG and writes them to build directory',
 		['svg2png']
+	)
+
+	grunt.registerTask(
+		'webkit',
+		'Builds node-webkit app',
+		['node-webkit-builder']
 	)
 }

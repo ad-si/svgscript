@@ -90,8 +90,7 @@ function getGrid () {
 	return gridFragment
 }
 
-
-module.exports.getIcons = function (iconsDirectoryPath) {
+function getIcons(iconsDirectoryPath) {
 
 	var fileNames,
 		icons = []
@@ -117,4 +116,10 @@ module.exports.getIcons = function (iconsDirectoryPath) {
 		})
 
 	return icons
+}
+
+
+module.exports = {
+	getIcons: getIcons,
+	createIcon: createIcon
 }

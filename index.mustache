@@ -38,7 +38,7 @@
 		gridVisibility = false
 
 	socket.on('icon', function (data) {
-		var iconContainer = document.querySelector('#' + data.fileName)
+		var iconContainer = document.getElementById(data.fileName)
 
 		iconContainer.innerHTML = data.content
 	})

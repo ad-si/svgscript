@@ -6,22 +6,27 @@ var shaven = require('shaven'),
 	chokidar = require('chokidar'),
 
 	svgScript = require('./public/svgScript.js'),
-
-	iconsDirectoryPath = __dirname + '/icons/educatopia',
-	watcher = chokidar.watch(
-		iconsDirectoryPath,
-		{
-			ignored: /[\/\\]\./,
-			persistent: true
-		}
-	),
 	shavenJs = fs.readFileSync(
 		path.join(__dirname, 'bower_components', 'shaven', 'shaven.js')
 	),
 	port = 3000,
+
+	iconsDirectoryPath,
+	watcher,
 	indexHTML,
 	styles,
 	content
+
+
+iconsDirectoryPath = path.join(__dirname, 'icons', 'misc')
+
+watcher = chokidar.watch(
+	iconsDirectoryPath,
+	{
+		ignored: /[\/\\]\./,
+		persistent: true
+	}
+)
 
 
 function handler (req, res) {
@@ -77,12 +82,12 @@ io.on('connection', function (socket) {
 			delete require.cache[require.resolve(iconPath)]
 
 			var fileName = path.basename(iconPath, '.js'),
-				icon
+				icon = {
+					fileName: fileName,
+					content: svgScript.createIcon(require(iconPath))
+				}
 
-			socket.emit('icon', {
-				fileName: fileName,
-				content: createIcon(require(iconPath))
-			})
+			socket.emit('icon', icon)
 		})
 		.on('error', function (error) {
 			console.error('Error happened', error)

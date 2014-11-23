@@ -17,9 +17,8 @@
     "socket.io": "^1.0.6",
     "svgpath": "^1.0.6"
   },
-  "window": {
-    "title": "SvgScript",
-    "width": 960,
-    "height": 1000
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-node-webkit-builder": "^0.3.0"
   }
 }

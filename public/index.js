@@ -1,60 +1,53 @@
-var fs = require('fs'),
-	path = require('path'),
-	shaven = require('shaven')
+var shaven = require('shaven'),
+	index = require('./index'),
+	gridVisibility = false
 
 
-function createIcon (module) {
+document
+	.getElementById('icons')
+	.innerHTML = index
+	.getIcons()
+	.map(function (icon) {
+		return '<div class=icon id=' + icon.fileName + '>' +
+		       icon.content +
+		       '</div>'
+	})
+	.join('')
 
-	var showOrigin = false,
-		icon = module()
+document
+	.querySelector('#toggleGrid')
+	.addEventListener('click', function (event) {
+		toggleGrid()
+	})
 
-	if (typeof icon !== 'string') {
 
-		// Add coordinate system
-		if (showOrigin === true) {
-			icon.push(
-				['g', {
-					style: 'fill: rgb(255,255,200);' +
-					       'stroke: red;' +
-					       'stroke-width: 1'},
-					['line', {x1: 0, y1: -100, x2: 0, y2: 100}],
-					['line', {x1: -100, y1: 0, x2: 100, y2: 0}]
-				]
-			)
-		}
+var gui = require('nw.gui'),
+	win = gui.Window.get(),
+	mb = new gui.Menu({type: "menubar"})
 
-		icon = shaven(icon)[0]
+gui.Window.get().menu = mb
+
+win.menu = new gui.Menu({type: 'menubar'})
+
+win.on('close', function (event) {
+
+	if (event === 'quit') {
+		// TODO: save files, …
+		win.close(true)
 	}
+	else
+		win.hide()
+})
 
-	return icon
-}
-
-
-module.exports.getIcons = function() {
-
-	var fileNames,
-		icons = [],
-		iconsDirectoryPath = '../icons/educatopia'
+gui.App.on('reopen', function () {
+	win.show()
+})
 
 
-	fileNames = fs.readdirSync(iconsDirectoryPath)
+/*
+ socket.on('icon', function (data) {
+ var iconContainer = document.querySelector('#' + data.fileName)
 
-	fileNames
-		.filter(function (fileName) {
-			return fileName.search(/.*\.(svg|js)/) > -1
-		})
-		.forEach(function (iconPath) {
-
-			iconPath = iconsDirectoryPath + '/' + iconPath
-
-
-			delete require.cache[require.resolve(iconPath)]
-
-			icons.push({
-				fileName: path.basename(iconPath, '.js'),
-				content: createIcon(require(iconPath))
-			})
-		})
-
-	return icons
-}
+ iconContainer.innerHTML = data.content
+ })
+ */

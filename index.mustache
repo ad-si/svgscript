@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>SvgScript</title>
+	<meta name=viewport
+	      content="initial-scale=0.5, minimum-scale=0.5">
+
+	<style type="text/css">
+		  {{styles}}
+	</style>
+</head>
+<body>
+
+<div id="wrapper">
+
+	<header>
+		<nav>
+			<h1 id="logo">Icons</h1>
+			<button id="toggleGrid">Grid</button>
+		</nav>
+	</header>
+
+
+	<div id="icons">
+	  {{content}}
+	</div>
+
+</div>
+
+<script>
+		{{scripts}}
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+	var socket = io('http://localhost'),
+		gridVisibility = false
+
+	socket.on('icon', function (data) {
+		var iconContainer = document.querySelector('#' + data.fileName)
+
+		iconContainer.innerHTML = data.content
+	})
+
+	function toggleGrid () {
+
+		var svgs = document.querySelectorAll('svg'),
+			gridContainers,
+			i,
+			defsSvg
+
+
+		if (gridVisibility) {
+
+			gridContainers = document.querySelectorAll('svg .grid')
+
+			for (i = 0; i < gridContainers.length; i++)
+				gridContainers[i].remove()
+
+			gridVisibility = false
+		}
+		else {
+
+			defsSvg = document.getElementById('definitions')
+
+			if (!defsSvg)
+				shaven(
+					[document.body,
+						['svg#definitions',
+							['defs',
+								gridFragment.concat(lines)
+							]
+						]
+					],
+					'http://www.w3.org/2000/svg'
+				)
+
+			for (i = 0; i < svgs.length; i++) {
+				!function () {
+
+					shaven(
+						[svgs[i],
+							['use', {
+							  'xlink:href': '#grid'
+							}]
+						],
+						'http://www.w3.org/2000/svg'
+					)
+				}()
+			}
+
+			gridVisibility = true
+		}
+	}
+
+	document
+		.querySelector('#toggleGrid')
+		.addEventListener('click', function (event) {
+			toggleGrid()
+		})
+
+</script>
+</body>
+</html>

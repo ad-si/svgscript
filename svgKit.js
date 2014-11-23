@@ -2,31 +2,69 @@ var clone = require('clone'),
 	Svgpath = require('svgpath')
 
 
-module.exports = function () {
+function radToDeg (radians) {
+	return radians * 180 / Math.PI
+}
 
-	function rgba (red, green, blue, alpha) {
+function degToRad (degrees) {
+	return degrees * Math.PI / 180
+}
 
-		alpha = alpha || 1
+function polarToCartesian (centerX, centerY, radius, angleInDegrees) {
 
-		if (Array.isArray(red)) {
-			if (value.length === 3)
-				return 'rgb(' + value.join() + ')'
+	//var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0
 
-			else if (value.length === 4)
-				return 'rgba(' + value.join() + ')'
+	var angleInRadians = degToRad(angleInDegrees)
 
-			else
-				throw new RangeError(
-						value.length + ' is an invalid number of Array elements!'
-				)
+	if (centerX === 0 && centerY === 0 && radius === 0)
+		return {x: 0, y: 0}
+	else
+		return {
+			x: centerX + (radius * Math.cos(angleInRadians)),
+			y: centerY + (radius * Math.sin(angleInRadians))
 		}
+}
 
-		else if (alpha === undefined || alpha === 0)
-			return 'rgb(' + [red, green, blue].join() + ')'
+function circleSection (x, y, radius, startAngle, endAngle) {
+
+	var start = polarToCartesian(x, y, radius, startAngle),
+		end = polarToCartesian(x, y, radius, endAngle),
+		arcSweep = endAngle - startAngle <= 0 ? 180 : 1
+
+	return [
+		'M', start.x, start.y,
+		'A', radius, radius, 0, arcSweep, 0, end.x, end.y,
+		'L', x, y,
+		'z'
+	].join(' ')
+}
+
+function rgba (red, green, blue, alpha) {
+
+	alpha = alpha || 1
+
+	if (Array.isArray(red)) {
+		if (value.length === 3)
+			return 'rgb(' + value.join() + ')'
+
+		else if (value.length === 4)
+			return 'rgba(' + value.join() + ')'
 
 		else
-			return 'rgba(' + [red, green, blue, alpha].join() + ')'
+			throw new RangeError(
+				value.length + ' is an invalid number of Array elements!'
+			)
 	}
+
+	else if (alpha === undefined || alpha === 0)
+		return 'rgb(' + [red, green, blue].join() + ')'
+
+	else
+		return 'rgba(' + [red, green, blue, alpha].join() + ')'
+}
+
+
+module.exports = function () {
 
 	return {
 		applyDefaults: function (configObject, defaultsObject) {
@@ -51,31 +89,28 @@ module.exports = function () {
 		rgb: rgba,
 		rgba: rgba,
 		clone: clone,
-		degToRad: function (degrees) {
-			return degrees * Math.PI / 180
-		},
-		radToDeg: function (radians) {
-			return radians * 180 / Math.PI
-		},
-		optimizePath: function(path){
+		degToRad: degToRad,
+		radToDeg: radToDeg,
+		optimizePath: function (path) {
 			return new Svgpath(path)
 				.round(0)
 				.toString()
 		},
-		optimizePathAbsolute: function(path){
+		optimizePathAbsolute: function (path) {
 			return new Svgpath(path)
 				.abs()
 				.round(0)
 				.toString()
 		},
-		optimizePathRelative: function(path){
+		optimizePathRelative: function (path) {
 			return new Svgpath(path)
 				.abs()
 				.round(0)
 				.rel()
 				.round(0)
 				.toString()
-		}
+		},
+		circleSection: circleSection
 	}
 
 }()

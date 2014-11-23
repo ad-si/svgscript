@@ -4,9 +4,10 @@ var shaven = require('shaven'),
 	fs = require('fs'),
 	path = require('path'),
 	chokidar = require('chokidar'),
-	clone = require('clone'),
+
+	svgScript = require('./public/svgScript.js'),
+
 	iconsDirectoryPath = __dirname + '/icons/educatopia',
-	fileNames, // = fs.readdirSync(iconsDirectoryPath),
 	watcher = chokidar.watch(
 		iconsDirectoryPath,
 		{
@@ -15,32 +16,37 @@ var shaven = require('shaven'),
 		}
 	),
 	shavenJs = fs.readFileSync(
-		__dirname + '/bower_components/shaven/shaven.js'
+		path.join(__dirname, 'bower_components', 'shaven', 'shaven.js')
 	),
-	indexHTML
+	port = 3000,
+	indexHTML,
+	styles,
+	content
 
 
 function handler (req, res) {
 
 	var returnHTML = ''
 
-	// TODO: Remove from handler for production
-	indexHTML = fs.readFileSync(path.join('public','index.html'))
+	indexHTML = fs.readFileSync(path.join('.', 'index.mustache'))
+	styles = fs.readFileSync(path.join('public', 'screen.css'))
+	content = svgScript
+		.getIcons(path.join(__dirname, 'icons', 'misc'))
+		.map(function (icon) {
+			return '<div class=icon id=' + icon.fileName + '>' +
+			       icon.content +
+			       '</div>'
+		})
+		.join('')
 
 	if (req.url === '/favicon.ico')
 		res.writeHead(404)
 
 	else if (req.url === '/') {
-		returnHTML = String(indexHTML).replace(
-			'{{content}}',
-			getIcons()
-				.map(function (icon) {
-					return '<div class=icon id=' + icon.fileName + '>' +
-					       icon.content +
-					       '</div>'
-				})
-				.join('')
-		)
+		returnHTML = String(indexHTML)
+			.replace('{{styles}}', styles)
+			.replace('{{content}}', content)
+			.replace('{{scripts}}', shavenJs)
 
 		res.writeHead(200)
 		res.end(returnHTML)
@@ -61,7 +67,8 @@ function handler (req, res) {
 }
 
 
-app.listen(3000)
+app.listen(port)
+console.log('SvgScript listens on http://localhost:' + port)
 
 io.on('connection', function (socket) {
 	watcher

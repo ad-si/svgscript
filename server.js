@@ -81,10 +81,10 @@ io.on('connection', function (socket) {
 
 			delete require.cache[require.resolve(iconPath)]
 
-			var fileName = path.basename(iconPath, '.js'),
+			var name = path.basename(iconPath, '.js'),
 				icon = {
-					fileName: fileName,
-					content: svgScript.createIcon(require(iconPath))
+					fileName: name,
+					content: svgScript.createIcon(name, require(iconPath))
 				}
 
 			socket.emit('icon', icon)

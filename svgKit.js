@@ -12,28 +12,24 @@ function degToRad (degrees) {
 
 function polarToCartesian (centerX, centerY, radius, angleInDegrees) {
 
-	//var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0
-
 	var angleInRadians = degToRad(angleInDegrees)
 
-	if (centerX === 0 && centerY === 0 && radius === 0)
-		return {x: 0, y: 0}
-	else
-		return {
-			x: centerX + (radius * Math.cos(angleInRadians)),
-			y: centerY + (radius * Math.sin(angleInRadians))
-		}
+	return {
+		x: centerX + (radius * Math.cos(angleInRadians)),
+		y: centerY + (radius * Math.sin(angleInRadians))
+	}
 }
 
 function circleSection (x, y, radius, startAngle, endAngle) {
 
 	var start = polarToCartesian(x, y, radius, startAngle),
 		end = polarToCartesian(x, y, radius, endAngle),
-		arcSweep = endAngle - startAngle <= 0 ? 180 : 1
+		diff = (endAngle - startAngle + 360) % 360,
+		largeArc = (diff > 180) ? 1 : 0
 
 	return [
 		'M', start.x, start.y,
-		'A', radius, radius, 0, arcSweep, 0, end.x, end.y,
+		'A', radius, radius, 0, largeArc, 1, end.x, end.y,
 		'L', x, y,
 		'z'
 	].join(' ')

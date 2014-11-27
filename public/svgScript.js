@@ -3,31 +3,55 @@ var fs = require('fs'),
 	shaven = require('shaven')
 
 
-function createIcon (module) {
+function addCoordinateSystem (icon) {
 
-	var showOrigin = false,
-		icon = module()
+	var showOrigin = false
 
-	if (typeof icon !== 'string') {
-
-		// Add coordinate system
-		if (showOrigin === true) {
-			icon.push(
-				['g', {
-					style: 'fill: rgb(255,255,200);' +
-					       'stroke: red;' +
-					       'stroke-width: 1'
-				},
-					['line', {x1: 0, y1: -100, x2: 0, y2: 100}],
-					['line', {x1: -100, y1: 0, x2: 100, y2: 0}]
-				]
-			)
-		}
-
-		icon = shaven(icon)[0]
+	if (showOrigin === true) {
+		icon.push(
+			['g', {
+				style: 'fill: rgb(255,255,200);' +
+				       'stroke: red;' +
+				       'stroke-width: 1'
+			},
+				['line', {x1: 0, y1: -100, x2: 0, y2: 100}],
+				['line', {x1: -100, y1: 0, x2: 100, y2: 0}]
+			]
+		)
 	}
 
 	return icon
+}
+
+function createIcon (name, module) {
+
+	var content
+
+	if (!module) throw new Error(name + ' is no module!')
+
+	if (module.shaven) {
+
+		content = module.shaven()
+
+		if (!Array.isArray(content))
+			throw new TypeError(name + '.shaven() must return an array!')
+
+		addCoordinateSystem(content)
+
+		content = shaven(content)[0]
+	}
+	else if (module.svg) {
+
+		content = module.svg()
+
+		if (typeof content !== 'string')
+			throw new TypeError(name + '.svg() must return a string!')
+	}
+	else
+		console.error('Icon module does not provide a suitable interface!')
+
+
+	return content
 }
 
 function getGrid () {
@@ -90,7 +114,7 @@ function getGrid () {
 	return gridFragment
 }
 
-function getIcons(iconsDirectoryPath) {
+function getIcons (iconsDirectoryPath) {
 
 	var fileNames,
 		icons = []
@@ -103,15 +127,16 @@ function getIcons(iconsDirectoryPath) {
 			return fileName.search(/.*\.(svg|js)/) > -1
 		})
 		.forEach(function (iconPath) {
+			var name
 
-			iconPath = iconsDirectoryPath + '/' + iconPath
-
+			iconPath = path.join(iconsDirectoryPath, iconPath)
+			name = path.basename(iconPath, '.js')
 
 			delete require.cache[require.resolve(iconPath)]
 
 			icons.push({
-				fileName: path.basename(iconPath, '.js'),
-				content: createIcon(require(iconPath))
+				fileName: name,
+				content: createIcon(name, require(iconPath))
 			})
 		})
 

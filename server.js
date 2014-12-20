@@ -38,7 +38,7 @@ function handler (req, res) {
 	content = svgScript
 		.getIcons(iconsDirectory)
 		.map(function (icon) {
-			return '<div class=icon id=' + icon.fileName + '>' +
+			return '<div class=icon id=' + icon.basename + '>' +
 			       icon.content +
 			       '</div>'
 		})
@@ -82,9 +82,9 @@ io.on('connection', function (socket) {
 
 			delete require.cache[require.resolve(iconPath)]
 
-			var name = path.basename(iconPath, '.js'),
+			var basename = path.basename(iconPath, '.js'),
 				icon = {
-					fileName: name,
+					basename: basename,
 					content: svgScript.createIcon(name, require(iconPath))
 				}
 

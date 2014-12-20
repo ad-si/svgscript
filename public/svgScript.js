@@ -31,7 +31,7 @@ function createIcon (name, module) {
 	if (!module)
 		throw new Error('Module ' + name + ' was not passed to createIcon().')
 
-	if (!module.version || semver.lt(module.version, '0.4.0')) {
+	if (!module.targetVersion || semver.lt(module.targetVersion, '0.4.0')) {
 
 		if (module.shaven) {
 
@@ -143,7 +143,7 @@ function getIcons (iconsDirectoryPath) {
 			module = require(iconPath)
 
 			icons.push({
-				fileName: name,
+				basename: name,
 				content: createIcon(name, module)
 			})
 		})

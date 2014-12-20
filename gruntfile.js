@@ -1,11 +1,16 @@
-var shaven = require('shaven'),
-    yaml = require('js-yaml')
+var fs = require('fs'),
+	shaven = require('shaven'),
+	yaml = require('js-yaml'),
+	path = require('path'),
+	rimraf = require('rimraf'),
+
+	svgScript = require('./public/svgScript')
 
 
 module.exports = function (grunt) {
 
 	var icons = [],
-	    path = grunt.option('path')
+		iconsDirectory = grunt.option('path')
 
 	function formatSvg (svgString) {
 
@@ -60,21 +65,35 @@ module.exports = function (grunt) {
 		'Writes SVG files to build directory',
 		function () {
 
-			var deployment = yaml
-				.safeLoad(grunt.file.read(path + '/deployment.yaml'))
+			var fileContent,
+				deployment
+
+			// Remove build folder
+			rimraf.sync('./build')
+
+			try {
+				fileContent = fs.readSync(
+					path.join(iconsDirectory, 'deployment.yaml')
+				)
+				deployment = yaml.safeLoad(fileContent)
+			}
+			catch (error) {
+				if (error.code !== 'ENOENT')
+					console.error(error)
+			}
 
 			if (deployment) {
 
 				deployment.icons.forEach(function (icon) {
 
-					var iconModule = require(path + '/' + icon.fileName),
-					    returnValue
+					var iconModule = require(iconsDirectory + '/' + icon.fileName),
+						returnValue
 
 
 					icon.targets.forEach(function (targetData, index) {
 
 						var fileName,
-						    scale = ''
+							scale = ''
 
 
 						if (targetData.scale > 0) {
@@ -87,12 +106,12 @@ module.exports = function (grunt) {
 							fileName = icon
 								.fileName
 								.replace(/\.js$/i,
-									(index === 0 ? '' : index) + '.svg')
+								(index === 0 ? '' : index) + '.svg')
 
 
-						grunt.log.write('Write icon', fileName, '… ')
+						grunt.log.write('Write icon', fileName)
 
-						if(iconModule.shaven)
+						if (iconModule.shaven)
 							returnValue = shaven(
 								iconModule.shaven(targetData)
 							)[0]
@@ -114,29 +133,19 @@ module.exports = function (grunt) {
 				})
 			}
 			else {
-				grunt.file.recurse(
-					path,
-					function (abspath, rootdir, subdir, filename) {
+				svgScript
+					.getIcons(path.join(__dirname, iconsDirectory))
+					.forEach(function (icon) {
 
-						icons.push({
-							name: filename,
-							content: shaven(require('./' + abspath))[0]
-						})
-					}
-				)
+						grunt.log.write('Write icon', icon.basename + '.svg ')
 
-				icons.forEach(function (icon) {
+						grunt.file.write(
+							path.join('./build/svg', icon.basename + '.svg'),
+							formatSvg(icon.content)
+						)
 
-					var iconName = icon.name.replace(/\.js$/i, '.svg')
-
-					grunt.log.write('Write icon', iconName, '… ')
-					grunt.file.write(
-						('./build/svg/' + iconName),
-						formatSvg(icon.content)
-					)
-
-					grunt.log.ok()
-				})
+						grunt.log.ok()
+					})
 			}
 		}
 	)

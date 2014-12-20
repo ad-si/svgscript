@@ -10,11 +10,11 @@ Icons must have following features:
 
 - File ending: `<file-name>.svg.js`
 - Must export following properties and methods:
-	- `version`: The semver version-string of the target-version of SvgScript
+	- `targetVersion`: Semver version-string of the target-version of SvgScript
 	- `svg()`: Returns a valid svg file as a string
 	- `shaven()`: Returns a shaven array
 
 - Optional methods:
 	- `component()`: Exports the main group-component of the icon
-	- `defaults(defaultsObject)`: Get or set the default values for the icon
-	- `config()`
+	- `defaults(defaultsObject)`: Get or set the default configuration values of the icon
+	- `config(configObject)`: Overwrite default configuration of icon parameters or get current configuration

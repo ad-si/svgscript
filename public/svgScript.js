@@ -1,6 +1,7 @@
 var fs = require('fs'),
 	path = require('path'),
-	shaven = require('shaven')
+	shaven = require('shaven'),
+	semver = require('semver')
 
 
 function addCoordinateSystem (icon) {
@@ -27,28 +28,32 @@ function createIcon (name, module) {
 
 	var content
 
-	if (!module) throw new Error(name + ' is no module!')
+	if (!module)
+		throw new Error('Module ' + name + ' was not passed to createIcon().')
 
-	if (module.shaven) {
+	if (!module.version || semver.lt(module.version, '0.4.0')) {
 
-		content = module.shaven()
+		if (module.shaven) {
 
-		if (!Array.isArray(content))
-			throw new TypeError(name + '.shaven() must return an array!')
+			content = module.shaven()
 
-		addCoordinateSystem(content)
+			if (!Array.isArray(content))
+				throw new TypeError(name + '.shaven() must return an array!')
 
-		content = shaven(content)[0]
+			addCoordinateSystem(content)
+
+			content = shaven(content)[0]
+		}
+		else if (module.svg) {
+
+			content = module.svg()
+
+			if (typeof content !== 'string')
+				throw new TypeError(name + '.svg() must return a string!')
+		}
+		else
+			console.error('Icon module does not provide a suitable interface!')
 	}
-	else if (module.svg) {
-
-		content = module.svg()
-
-		if (typeof content !== 'string')
-			throw new TypeError(name + '.svg() must return a string!')
-	}
-	else
-		console.error('Icon module does not provide a suitable interface!')
 
 
 	return content
@@ -127,16 +132,19 @@ function getIcons (iconsDirectoryPath) {
 			return fileName.search(/.*\.(svg|js)/) > -1
 		})
 		.forEach(function (iconPath) {
-			var name
+			var name,
+				module
 
 			iconPath = path.join(iconsDirectoryPath, iconPath)
 			name = path.basename(iconPath, '.js')
 
 			delete require.cache[require.resolve(iconPath)]
 
+			module = require(iconPath)
+
 			icons.push({
 				fileName: name,
-				content: createIcon(name, require(iconPath))
+				content: createIcon(name, module)
 			})
 		})
 

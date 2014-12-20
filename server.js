@@ -11,17 +11,17 @@ var shaven = require('shaven'),
 	),
 	port = 3000,
 
-	iconsDirectoryPath,
+	iconsDirectory,
 	watcher,
 	indexHTML,
 	styles,
 	content
 
 
-iconsDirectoryPath = path.join(__dirname, 'icons', 'misc')
+iconsDirectory = path.join(__dirname, 'icons', 'lamda')
 
 watcher = chokidar.watch(
-	iconsDirectoryPath,
+	iconsDirectory,
 	{
 		ignored: /[\/\\]\./,
 		persistent: true
@@ -36,7 +36,7 @@ function handler (req, res) {
 	indexHTML = fs.readFileSync(path.join('.', 'index.mustache'))
 	styles = fs.readFileSync(path.join('public', 'screen.css'))
 	content = svgScript
-		.getIcons(path.join(__dirname, 'icons', 'misc'))
+		.getIcons(iconsDirectory)
 		.map(function (icon) {
 			return '<div class=icon id=' + icon.fileName + '>' +
 			       icon.content +
@@ -76,6 +76,7 @@ app.listen(port)
 console.log('SvgScript listens on http://localhost:' + port)
 
 io.on('connection', function (socket) {
+
 	watcher
 		.on('change', function (iconPath) {
 

@@ -18,7 +18,7 @@ var shaven = require('shaven'),
 	content
 
 
-iconsDirectory = path.join(__dirname, 'icons', 'lamda')
+iconsDirectory = path.join(__dirname, 'icons', 'misc')
 
 watcher = chokidar.watch(
 	iconsDirectory,
@@ -85,7 +85,7 @@ io.on('connection', function (socket) {
 			var basename = path.basename(iconPath, '.js'),
 				icon = {
 					basename: basename,
-					content: svgScript.createIcon(name, require(iconPath))
+					content: svgScript.createIcon(basename, require(iconPath))
 				}
 
 			socket.emit('icon', icon)

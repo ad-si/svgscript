@@ -72,15 +72,16 @@ module.exports = function (grunt) {
 			rimraf.sync('./build')
 
 			try {
-				fileContent = fs.readSync(
+				fileContent = fs.readFileSync(
 					path.join(iconsDirectory, 'deployment.yaml')
 				)
 				deployment = yaml.safeLoad(fileContent)
 			}
 			catch (error) {
 				if (error.code !== 'ENOENT')
-					console.error(error)
+					throw error
 			}
+
 
 			if (deployment) {
 
@@ -89,6 +90,8 @@ module.exports = function (grunt) {
 					var iconModule = require(iconsDirectory + '/' + icon.fileName),
 						returnValue
 
+					if (icon.skip)
+						return
 
 					icon.targets.forEach(function (targetData, index) {
 

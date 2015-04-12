@@ -1,18 +1,21 @@
 var shaven = require('shaven'),
 	index = require('./index'),
-	gridVisibility = false
+	gridVisibility = false,
+	iconsHtml
 
-
-document
-	.getElementById('icons')
-	.innerHTML = index
+iconsHtml = index
 	.getIcons()
 	.map(function (icon) {
-		return '<div class=icon id=' + icon.fileName + '>' +
+		return '<div class=icon id=' + icon.basename + '>' +
 		       icon.content +
 		       '</div>'
 	})
 	.join('')
+
+
+document
+	.getElementById('icons')
+	.innerHTML = iconsHtml
 
 document
 	.querySelector('#toggleGrid')

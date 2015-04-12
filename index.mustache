@@ -37,10 +37,10 @@
 	var socket = io('http://localhost'),
 		gridVisibility = false
 
-	socket.on('icon', function (data) {
-		var iconContainer = document.getElementById(data.fileName)
+	socket.on('icon', function (icon) {
+		var iconContainer = document.getElementById(icon.basename)
 
-		iconContainer.innerHTML = data.content
+		iconContainer.innerHTML = icon.content
 	})
 
 	function toggleGrid () {

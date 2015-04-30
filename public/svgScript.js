@@ -3,7 +3,8 @@ require('coffee-script/register')
 var fs = require('fs'),
 	path = require('path'),
 	shaven = require('shaven'),
-	semver = require('semver')
+	semver = require('semver'),
+	traverse = require('traverse')
 
 
 function addCoordinateSystem (icon) {
@@ -14,8 +15,8 @@ function addCoordinateSystem (icon) {
 		icon.push(
 			['g', {
 				style: 'fill: rgb(255,255,200);' +
-				       'stroke: red;' +
-				       'stroke-width: 1'
+				'stroke: red;' +
+				'stroke-width: 1'
 			},
 				['line', {x1: 0, y1: -100, x2: 0, y2: 100}],
 				['line', {x1: -100, y1: 0, x2: 100, y2: 0}]
@@ -41,6 +42,40 @@ function createIcon (name, module) {
 
 			if (!Array.isArray(content))
 				throw new TypeError(name + '.shaven() must return an array!')
+
+
+			// Create transformation string from transformation objects
+			content = traverse(content).forEach(function (value) {
+
+				if (typeof value === 'number')
+					this.update(parseFloat(value.toFixed(15)))
+
+				if (this.key === 'transform' && Array.isArray(value))
+					this.update(
+						value
+							.map(function (transformation) {
+
+								var string = transformation.type + '(',
+									values = []
+
+								if (transformation.type === 'rotate')
+									values.push(transformation.degrees || 0)
+
+								if (transformation.x)
+									values.push(transformation.x)
+
+								if (transformation.y)
+									values.push(transformation.y)
+
+								string += values.join()
+								string += ')'
+
+								return string
+							})
+							.join(' ')
+					)
+			})
+
 
 			addCoordinateSystem(content)
 

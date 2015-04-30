@@ -34,14 +34,14 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
-	var socket = io('http://localhost'),
+	var //socket = io('http://localhost'),
 		gridVisibility = false
 
-	socket.on('icon', function (icon) {
-		var iconContainer = document.getElementById(icon.basename)
-
-		iconContainer.innerHTML = icon.content
-	})
+//	socket.on('icon', function (icon) {
+//		var iconContainer = document.getElementById(icon.basename)
+//
+//		iconContainer.innerHTML = icon.content
+//	})
 
 	function toggleGrid () {
 

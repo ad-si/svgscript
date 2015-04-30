@@ -1,3 +1,5 @@
+require('coffee-script/register')
+
 var shaven = require('shaven'),
 	app = require('http').createServer(handler),
 	io = require('socket.io')(app),
@@ -74,6 +76,7 @@ function handler (req, res) {
 
 app.listen(port)
 console.log('SvgScript listens on http://localhost:' + port)
+
 
 io.on('connection', function (socket) {
 

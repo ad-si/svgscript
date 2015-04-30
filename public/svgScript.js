@@ -1,3 +1,5 @@
+require('coffee-script/register')
+
 var fs = require('fs'),
 	path = require('path'),
 	shaven = require('shaven'),
@@ -129,14 +131,18 @@ function getIcons (iconsDirectoryPath) {
 
 	fileNames
 		.filter(function (fileName) {
-			return fileName.search(/.*\.(svg|js)/) > -1
+			return fileName.search(/.*\.(svg|js|coffee)/) > -1
 		})
 		.forEach(function (iconPath) {
+
 			var name,
 				module
 
 			iconPath = path.join(iconsDirectoryPath, iconPath)
-			name = path.basename(iconPath, '.js')
+			name = path.basename(
+				iconPath,
+				path.extname(iconPath)
+			)
 
 			delete require.cache[require.resolve(iconPath)]
 

@@ -12,6 +12,9 @@ module.exports = function (grunt) {
 	var icons = [],
 		iconsDirectory = grunt.option('path')
 
+	if(!iconsDirectory)
+		throw new Error('You must speficy an icons directory')
+
 	function formatSvg (svgString) {
 
 		var missingNamespaces = []

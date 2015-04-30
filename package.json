@@ -12,6 +12,8 @@
     "chokidar": "^0.8.4",
     "clone": "^0.1.18",
     "coffee-script": "^1.9.2",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
     "grunt-svg2png": "^0.2.5",
     "hull.js": "^0.2.1",
     "js-yaml": "^3.1.0",
@@ -25,5 +27,8 @@
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-node-webkit-builder": "^0.3.0"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/grunt --path ./icons/misc"
   }
 }

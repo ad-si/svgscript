@@ -4,7 +4,13 @@ var fs = require('fs'),
 	path = require('path'),
 	shaven = require('shaven'),
 	semver = require('semver'),
-	traverse = require('traverse')
+	traverse = require('traverse'),
+
+	svgKit = require('../svgKit'),
+
+	tools = {
+		svgKit: svgKit
+	}
 
 function createTransformationString (content) {
 
@@ -74,7 +80,7 @@ function createIcon (name, module) {
 
 		if (module.shaven) {
 
-			content = module.shaven()
+			content = module.shaven(null, tools)
 
 			if (!Array.isArray(content))
 				throw new TypeError(name + '.shaven() must return an array!')

@@ -28,6 +28,12 @@
     "traverse": "^0.6.6"
   },
   "scripts": {
-    "build": "./node_modules/.bin/grunt --path ./icons/misc"
-  }
+    "build": "grunt --path ./icons/misc",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/adius/svgscript.git"
+  },
+  "homepage": "https://bitbucket.org/adius/svgscript#readme"
 }

@@ -160,13 +160,19 @@ function getGrid () {
 	return gridFragment
 }
 
-function getIcons (iconsDirectoryPath) {
+function getIcons (absoluteIconsDirectoryPath) {
 
 	var fileNames,
 		icons = []
 
 
-	fileNames = fs.readdirSync(iconsDirectoryPath)
+	if (fs.statSync(absoluteIconsDirectoryPath).isFile()) {
+		fileNames = [path.basename(absoluteIconsDirectoryPath)]
+		absoluteIconsDirectoryPath = path.dirname(absoluteIconsDirectoryPath)
+	}
+	else
+		fileNames = fs.readdirSync(absoluteIconsDirectoryPath)
+
 
 	fileNames
 		.filter(function (fileName) {
@@ -177,20 +183,29 @@ function getIcons (iconsDirectoryPath) {
 			var name,
 				module
 
-			iconPath = path.join(iconsDirectoryPath, iconPath)
+			iconPath = path.join(absoluteIconsDirectoryPath, iconPath)
 			name = path.basename(
 				iconPath,
 				path.extname(iconPath)
 			)
 
+			name += /.*\.svg$/.test(name) ? '' : '.svg'
+
 			delete require.cache[require.resolve(iconPath)]
 
-			module = require(iconPath)
+			try {
+				module = require(iconPath)
 
-			icons.push({
-				basename: name,
-				content: createIcon(name, module)
-			})
+				icons.push({
+					fileName: name,
+					directoryName: absoluteIconsDirectoryPath,
+					filePath: path.join(absoluteIconsDirectoryPath, name),
+					content: createIcon(name, module)
+				})
+			}
+			catch (error) {
+				console.error(error)
+			}
 		})
 
 	return icons

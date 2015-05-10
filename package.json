@@ -27,10 +27,6 @@
     "svgpath": "^1.0.6",
     "traverse": "^0.6.6"
   },
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-node-webkit-builder": "^0.3.0"
-  },
   "scripts": {
     "build": "./node_modules/.bin/grunt --path ./icons/misc"
   }

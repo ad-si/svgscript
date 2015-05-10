@@ -83,9 +83,11 @@ io.on('connection', function (socket) {
 	watcher
 		.on('change', function (iconPath) {
 
+			console.log(iconPath, 'changed')
+
 			delete require.cache[require.resolve(iconPath)]
 
-			var basename = path.basename(iconPath, '.js'),
+			var basename = path.basename(iconPath, path.extname(iconPath)),
 				icon = {
 					basename: basename,
 					content: svgScript.createIcon(basename, require(iconPath))

@@ -6,7 +6,7 @@ var fs = require('fs'),
 	semver = require('semver'),
 	traverse = require('traverse'),
 
-	svgKit = require('../svgKit'),
+	svgKit = require('./svgKit'),
 
 	tools = {
 		svgKit: svgKit

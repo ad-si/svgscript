@@ -4,8 +4,8 @@ var fsp = require('fs-promise'),
 	path = require('path'),
 	chalk = require('chalk'),
 
-	svgScript = require('../public/svgScript'),
-	svgKit = require('../svgKit'),
+	svgScript = require('./svgScript'),
+	svgKit = require('./svgKit'),
 
 	commandName = path.basename(process.argv[1]),
 	args = process.argv.slice(2)

@@ -1,16 +1,104 @@
-require('coffee-script/register')
+'use strict'
 
-var fs = require('fs'),
-	path = require('path'),
-	shaven = require('shaven'),
-	semver = require('semver'),
-	traverse = require('traverse'),
+const fs = require('fs')
+const path = require('path')
+const shaven = require('shaven')
+const semver = require('semver')
+const traverse = require('traverse')
+const rimraf = require('rimraf')
+const yaml = require('js-yaml')
+const chalk = require('chalk')
 
-	svgKit = require('./svgKit'),
+const svgKit = require('./svgKit')
 
-	tools = {
-		svgKit: svgKit
+const tools = {
+	applyDefaults: svgKit.applyDefaults,
+	rgb: svgKit.rgb,
+	rgba: svgKit.rgba,
+	clone: svgKit.clone,
+	degToRad: svgKit.degToRad,
+	radToDeg: svgKit.radToDeg,
+	optimizePath: svgKit.optimizePath,
+	optimizePathAbsolute: svgKit.optimizePathAbsolute,
+	optimizePathRelative: svgKit.optimizePathRelative,
+	circleSection: svgKit.circleSection,
+	formatSvg: svgKit.formatSvg
+}
+
+
+function make (makeFilePath) {
+
+	var iconsDirectory = path.dirname(makeFilePath),
+		fileContent,
+		deployment
+
+	// Remove build folder
+	rimraf.sync(path.join(path.dirname(makeFilePath), 'build'))
+
+	try {
+		fileContent = fs.readFileSync(makeFilePath)
+		deployment = yaml.safeLoad(fileContent)
 	}
+	catch (error) {
+		if (error.code !== 'ENOENT')
+			throw error
+	}
+
+	console.log('Write Icons:')
+
+	deployment.icons.forEach(function (icon) {
+
+		var iconModule = require(iconsDirectory + '/' + icon.fileName)
+
+		if (icon.skip)
+			return
+
+		icon.targets.forEach(function (targetData, index) {
+
+			var fileName = icon.fileName,
+				scale = ''
+
+
+			if (targetData.fileName)
+				fileName = targetData.fileName + '.js'
+			else
+				fileName = fileName.replace(
+					/\.js$/i,
+					(index === 0 ? '' : index) + '.js'
+				)
+
+			if (targetData.scale > 0) {
+				scale = '@' + targetData.scale + 'x'
+				fileName = fileName.replace(/\.js$/i, scale + '.js')
+			}
+
+
+			fileName = fileName.replace(/\.js$/i, '.svg')
+
+			try {
+				fs.mkdirSync(path.join(iconsDirectory, 'build'))
+				fs.mkdirSync(path.join(iconsDirectory, 'build/svg'))
+			}
+			catch (error) {
+				if (error.code !== 'EEXIST')
+					throw error
+			}
+
+			process.stdout.write(' - ' + fileName)
+
+			fs.writeFileSync(
+				path.join(iconsDirectory, 'build/svg', fileName),
+				svgKit.formatSvg(createIcon(
+					icon.fileName,
+					iconModule,
+					targetData
+				))
+			)
+
+			console.log(chalk.green(' ✔'))
+		})
+	})
+}
 
 function createTransformationString (content) {
 
@@ -69,7 +157,7 @@ function addCoordinateSystem (icon) {
 	return icon
 }
 
-function createIcon (name, module) {
+function createIcon (name, module, targetData) {
 
 	var content
 
@@ -80,7 +168,7 @@ function createIcon (name, module) {
 
 		if (module.shaven) {
 
-			content = module.shaven(null, tools)
+			content = module.shaven(targetData, tools)
 
 			if (!Array.isArray(content))
 				throw new TypeError(name + '.shaven() must return an array!')
@@ -93,7 +181,7 @@ function createIcon (name, module) {
 		}
 		else if (module.svg) {
 
-			content = module.svg()
+			content = module.svg(targetData, tools)
 
 			if (typeof content !== 'string')
 				throw new TypeError(name + '.svg() must return a string!')
@@ -168,21 +256,25 @@ function getGrid () {
 
 function getIcons (absoluteIconsDirectoryPath) {
 
-	var fileNames,
-		icons = []
+	let icons = []
+	let fileNames
 
+	absoluteIconsDirectoryPath = absoluteIconsDirectoryPath || path.resolve(
+		__dirname,
+		'../test/printerBed.js'
+	)
 
 	if (fs.statSync(absoluteIconsDirectoryPath).isFile()) {
 		fileNames = [path.basename(absoluteIconsDirectoryPath)]
 		absoluteIconsDirectoryPath = path.dirname(absoluteIconsDirectoryPath)
 	}
-	else
+	else {
 		fileNames = fs.readdirSync(absoluteIconsDirectoryPath)
-
+	}
 
 	fileNames
 		.filter(function (fileName) {
-			return fileName.search(/.*\.(svg|js|coffee)/) > -1
+			return fileName.search(/.*\.(js|coffee)/) > -1
 		})
 		.forEach(function (iconPath) {
 
@@ -210,7 +302,7 @@ function getIcons (absoluteIconsDirectoryPath) {
 				})
 			}
 			catch (error) {
-				console.error(error)
+				console.error(error.stack)
 			}
 		})
 
@@ -220,5 +312,6 @@ function getIcons (absoluteIconsDirectoryPath) {
 
 module.exports = {
 	getIcons: getIcons,
-	createIcon: createIcon
+	createIcon: createIcon,
+	make: make
 }

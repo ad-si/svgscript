@@ -1,14 +1,13 @@
-var shaven = require('shaven'),
-	index = require('./index'),
-	gridVisibility = false,
-	iconsHtml
+const shaven = require('shaven')
+const svgScript = require('../source/index')
+const gridVisibility = false
 
-iconsHtml = index
+const iconsHtml = svgScript
 	.getIcons()
 	.map(function (icon) {
 		return '<div class=icon id=' + icon.basename + '>' +
-		       icon.content +
-		       '</div>'
+			icon.content +
+			'</div>'
 	})
 	.join('')
 
@@ -47,10 +46,8 @@ gui.App.on('reopen', function () {
 })
 
 
-/*
- socket.on('icon', function (data) {
- var iconContainer = document.querySelector('#' + data.fileName)
+socket.on('icon', function (data) {
+	var iconContainer = document.querySelector('#' + data.fileName)
 
- iconContainer.innerHTML = data.content
- })
- */
+	iconContainer.innerHTML = data.content
+})

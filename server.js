@@ -1,28 +1,23 @@
+'use strict'
+
 require('coffee-script/register')
 
-var shaven = require('shaven'),
-	app = require('http').createServer(handler),
-	io = require('socket.io')(app),
-	fs = require('fs'),
-	path = require('path'),
-	chokidar = require('chokidar'),
+const shaven = require('shaven')
+const app = require('http').createServer(handler)
+const io = require('socket.io')(app)
+const fs = require('fs')
+const path = require('path')
+const chokidar = require('chokidar')
 
-	svgScript = require('./public/svgScript.js'),
-	shavenJs = fs.readFileSync(
-		path.join(__dirname, 'bower_components', 'shaven', 'shaven.js')
-	),
-	port = 3000,
+const svgScript = require('./public/index.js')
+const shavenJs = fs.readFileSync(
+	path.join(__dirname, 'bower_components', 'shaven', 'shaven.js')
+)
+const port = 3000
 
-	iconsDirectory,
-	watcher,
-	indexHTML,
-	styles,
-	content
+const iconsDirectory = path.join(__dirname, 'icons', 'misc')
 
-
-iconsDirectory = path.join(__dirname, 'icons', 'misc')
-
-watcher = chokidar.watch(
+const watcher = chokidar.watch(
 	iconsDirectory,
 	{
 		ignored: /[\/\\]\./,
@@ -33,11 +28,11 @@ watcher = chokidar.watch(
 
 function handler (req, res) {
 
-	var returnHTML = ''
+	let returnHTML = ''
 
-	indexHTML = fs.readFileSync(path.join('.', 'index.mustache'))
-	styles = fs.readFileSync(path.join('public', 'screen.css'))
-	content = svgScript
+	const indexHTML = fs.readFileSync(path.join('.', 'index.mustache'))
+	const styles = fs.readFileSync(path.join('public', 'screen.css'))
+	const content = svgScript
 		.getIcons(iconsDirectory)
 		.map(function (icon) {
 			return '<div class=icon id=' + icon.basename + '>' +

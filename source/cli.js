@@ -1,29 +1,26 @@
 #! /usr/bin/env node
 
-var fsp = require('fs-promise'),
-	path = require('path'),
-	chalk = require('chalk'),
+'use strict'
 
-	svgScript = require('./svgScript'),
-	svgKit = require('./svgKit'),
+const fsp = require('fs-promise')
+const path = require('path')
+const chalk = require('chalk')
+const chokidar = require('chokidar')
 
-	commandName = path.basename(process.argv[1]),
-	args = process.argv.slice(2),
-	beautifyHtml = require('js-beautify').html,
-	flags = {}
+const svgScript = require('./index')
+const svgKit = require('./svgKit')
 
-
-args.forEach(function (cliArgument) {
-	if (/^\-\-/i.test(cliArgument)) {
-		return flags[cliArgument.slice(2)] = true
-	}
-})
+const commandName = path.basename(process.argv[1])
+const args = process.argv.slice(2)
+const absoluteIconsPath = path.resolve(process.cwd(), args.pop())
+const beautifyHtml = require('js-beautify').html
+const flags = {}
 
 
-if (args[0] === 'compile') {
+function compileIcons (iconPaths) {
 
 	svgScript
-		.getIcons(path.resolve(process.cwd(), args.pop()))
+		.getIcons(iconPaths)
 		.forEach(function (icon) {
 
 			var content = svgKit.formatSvg(icon.content)
@@ -35,7 +32,7 @@ if (args[0] === 'compile') {
 				content += '\n'
 
 			fsp
-				.writeFile(icon.filePath,content)
+				.writeFile(icon.filePath, content)
 				.then(function () {
 					console.log(chalk.green('Created', icon.fileName))
 				})
@@ -43,6 +40,37 @@ if (args[0] === 'compile') {
 					console.error(chalk.red(error))
 				})
 		})
+}
+
+
+args.forEach(function (cliArgument) {
+	if (/^\-\-/i.test(cliArgument)) {
+		return flags[cliArgument.slice(2)] = true
+	}
+})
+
+
+if (args[0] === 'compile' || args[0] === 'watch') {
+
+	compileIcons(absoluteIconsPath)
+
+	if (args[0] === 'watch') {
+
+		chokidar
+			.watch(absoluteIconsPath, {
+				ignored: /[\/\\]\./,
+				persistent: true
+			})
+			.on('change', function (path) {
+				compileIcons(path)
+			})
+			.on('error', function (error) {
+				throw error
+			})
+	}
+}
+else if (args[0] === 'make'){
+	svgScript.make(absoluteIconsPath)
 }
 else {
 

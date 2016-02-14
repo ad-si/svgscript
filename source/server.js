@@ -73,8 +73,6 @@ module.exports = (iconsDirectory) => {
 	const watcher = chokidar.watch(path.resolve(iconsDirectory), watcherConfig)
 
 	function compileIcon (iconPath, socket) {
-		console.log(iconPath, 'changed')
-
 		delete require.cache[require.resolve(iconPath)]
 
 		const basename = path.basename(iconPath, path.extname(iconPath))
@@ -87,9 +85,29 @@ module.exports = (iconsDirectory) => {
 	socketio.on('connection', socket => {
 		console.log('Websocket connection was established')
 		watcher
-			.on('change', iconPath =>
-				socket.emit('icon', compileIcon(iconPath)))
+			.on('change', iconPath => {
+				console.log(iconPath, 'changed')
+				socket.emit('icon', compileIcon(iconPath))
+			})
 			.on('error', console.error)
+
+		const watched = watcher.getWatched()
+
+		Object
+			.keys(watched)
+			.reduce(
+				(paths, currentDirectory) => {
+					watched[currentDirectory].forEach(fileName => {
+						paths.push(path.join(currentDirectory, fileName))
+					})
+					return paths
+				},
+				[]
+			)
+			.filter(filePath => /\.(js|coffee)$/gi.test(filePath))
+			.forEach(filePath =>
+				socket.emit('icon', compileIcon(filePath))
+			)
 	})
 
 	app.get('/', (request, response) =>

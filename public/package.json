@@ -16,10 +16,5 @@
     "shaven": "^0.6.2",
     "socket.io": "^1.0.6",
     "svgpath": "^1.0.6"
-  },
-  "window": {
-    "title": "SvgScript",
-    "width": 960,
-    "height": 1000
   }
 }

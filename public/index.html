@@ -6,26 +6,22 @@
 	<meta
 		name=viewport
 		content="initial-scale=0.5, minimum-scale=0.5">
-	<link rel="stylesheet" href="screen.css"/>
+	<link rel="stylesheet" href="/styles/screen.css"/>
 </head>
 <body>
+	<div id="wrapper">
+		<header>
+			<nav>
+				<h1 id="logo">Icons</h1>
+				<button id="toggleGrid">Grid</button>
+			</nav>
+		</header>
 
-<div id="wrapper">
-
-	<header>
-		<nav>
-			<h1 id="logo">Icons</h1>
-			<button id="toggleGrid">Grid</button>
-		</nav>
-	</header>
-
-
-	<div id="icons">
+		<div id="icons">
+		</div>
 	</div>
 
-</div>
-
-<script src="./index.js"></script>
-
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/scripts/index.js"></script>
 </body>
 </html>

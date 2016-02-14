@@ -8,6 +8,7 @@ const chalk = require('chalk')
 const chokidar = require('chokidar')
 
 const svgScript = require('./index')
+const svgScriptServer = require('./server')
 const svgKit = require('./svgKit')
 
 const commandName = path.basename(process.argv[1])
@@ -69,8 +70,11 @@ if (args[0] === 'compile' || args[0] === 'watch') {
 			})
 	}
 }
-else if (args[0] === 'make'){
+else if (args[0] === 'make') {
 	svgScript.make(absoluteIconsPath)
+}
+else if (args[0] === 'serve') {
+	svgScriptServer(absoluteIconsPath)
 }
 else {
 

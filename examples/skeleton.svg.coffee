@@ -1,19 +1,20 @@
 module.exports.shaven = (config, tools) ->
+
 	defaults =
 		width: 100
-		width: 100
+		height: 100
 
-	tools.applyDefaults(config, tools)
+	{width, height} = Object.assign({}, defaults, config)
 
 	return [
 		'svg'
 		width: width + 'mm'
-		height: width + 'mm'
+		height: height + 'mm'
 		viewBox: [
 			0
 			0
 			width
-			width
+			height
 		]
 		[
 			'g',

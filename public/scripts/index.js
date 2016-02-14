@@ -15,6 +15,7 @@ socket.on('icon', (data) => {
 	if (!iconContainer) {
 		iconContainer = window.document.createElement('div')
 		iconContainer.id = 'data.fileName'
+		iconContainer.classList.add('icon')
 		iconsContainer.appendChild(iconContainer)
 	}
 

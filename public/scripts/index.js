@@ -1,9 +1,13 @@
 'use strict'
 
 const shaven = require('shaven')
+
+const toggleGrid = require('./toggleGrid')
+
 const gridVisibility = false
 const socket = io()
 const iconsContainer = window.document.querySelector('#icons')
+
 
 document
 	.querySelector('#toggleGrid')

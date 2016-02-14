@@ -10,6 +10,8 @@ const yaml = require('js-yaml')
 const chalk = require('chalk')
 
 const tools = require('./tools')
+const coordinateSystemAxes = require('./tools/coordinateSystemAxes')
+
 
 
 function make (makeFilePath) {
@@ -123,26 +125,6 @@ function createTransformationString (content) {
 }
 
 
-function addCoordinateSystem (icon) {
-
-	var showOrigin = false
-
-	if (showOrigin === true) {
-		icon.push(
-			['g', {
-				style: 'fill: rgb(255,255,200);' +
-				'stroke: red;' +
-				'stroke-width: 1'
-			},
-				['line', {x1: 0, y1: -100, x2: 0, y2: 100}],
-				['line', {x1: -100, y1: 0, x2: 100, y2: 0}]
-			]
-		)
-	}
-
-	return icon
-}
-
 function createIcon (name, module, targetData) {
 
 	var content
@@ -161,7 +143,7 @@ function createIcon (name, module, targetData) {
 
 			content = createTransformationString(content)
 
-			addCoordinateSystem(content)
+			content.push(coordinateSystemAxes)
 
 			content = shaven(content)[0]
 		}
@@ -178,66 +160,6 @@ function createIcon (name, module, targetData) {
 
 
 	return content
-}
-
-function getGrid () {
-
-	var gridFragment = [
-			'g.grid',
-			{
-				style: {
-					fill: 'rgb(255, 255, 200)',
-					stroke: 'red',
-					'stroke-width': 0.1
-				}
-			},
-			['line', {
-				style: {
-					'stroke-width': 1
-				},
-				x1: 0,
-				y1: -100,
-				x2: 0,
-				y2: 100
-			}
-			],
-			['line', {
-				style: {
-					'stroke-width': 1
-				},
-				x1: -100,
-				y1: 0,
-				x2: 100,
-				y2: 0
-			}
-			]
-		],
-		lines = [],
-		a
-
-	// Horizontal lines
-	for (a = 0; a < 200; a++)
-		lines.push(
-			['line', {
-				x1: -100 + a,
-				y1: -100,
-				x2: -100 + a,
-				y2: 100
-			}]
-		)
-
-	// Vertical lines
-	for (a = 0; a < 200; a++)
-		lines.push(
-			['line', {
-				x1: -100,
-				y1: -100 + a,
-				x2: 100,
-				y2: -100 + a
-			}]
-		)
-
-	return gridFragment
 }
 
 function getIcons (absoluteIconsDirectoryPath) {

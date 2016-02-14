@@ -9,21 +9,7 @@ const rimraf = require('rimraf')
 const yaml = require('js-yaml')
 const chalk = require('chalk')
 
-const svgKit = require('./svgKit')
-
-const tools = {
-	applyDefaults: svgKit.applyDefaults,
-	rgb: svgKit.rgb,
-	rgba: svgKit.rgba,
-	clone: svgKit.clone,
-	degToRad: svgKit.degToRad,
-	radToDeg: svgKit.radToDeg,
-	optimizePath: svgKit.optimizePath,
-	optimizePathAbsolute: svgKit.optimizePathAbsolute,
-	optimizePathRelative: svgKit.optimizePathRelative,
-	circleSection: svgKit.circleSection,
-	formatSvg: svgKit.formatSvg
-}
+const tools = require('./tools')
 
 
 function make (makeFilePath) {

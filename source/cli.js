@@ -9,7 +9,7 @@ const chokidar = require('chokidar')
 
 const svgScript = require('./index')
 const svgScriptServer = require('./server')
-const svgKit = require('./svgKit')
+const formatSvg = require('./tools/formatSvg')
 
 const commandName = path.basename(process.argv[1])
 const args = process.argv.slice(2)
@@ -24,7 +24,7 @@ function compileIcons (iconPaths) {
 		.getIcons(iconPaths)
 		.forEach(function (icon) {
 
-			var content = svgKit.formatSvg(icon.content)
+			var content = formatSvg(icon.content)
 
 			if (flags.beautify)
 				content = beautifyHtml(content)

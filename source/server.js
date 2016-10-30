@@ -65,7 +65,7 @@ module.exports = (iconsDirectory) => {
   // eslint-disable-next-line no-console
   console.info('Watching', iconsDirectory, 'for changes')
 
-  const port = 3000
+  const port = 7992
   const watcherConfig = {
     ignored: /.+\.(?!js|coffee)\w+$/gim,
   }

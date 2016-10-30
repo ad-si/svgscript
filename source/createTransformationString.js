@@ -1,7 +1,6 @@
 const traverse = require('traverse')
 
 module.exports = (content) => {
-  // Create transformation string from transformation objects
   return traverse(content)
     // Don't use arrow function to have correct scope for this
     .forEach(function (value) {
@@ -9,6 +8,7 @@ module.exports = (content) => {
         this.update(parseFloat(value.toFixed(15)))
       }
 
+      // Create transformation string from transformation objects
       if (this.key === 'transform' && Array.isArray(value)) {
         this.update(
           value

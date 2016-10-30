@@ -6,11 +6,12 @@ module.exports.shaven = () => {
   const screwDiameter = 3
   const renderScrews = false
 
-  return ['svg', {
-    width: width + 'mm',
-    height: height + 'mm',
-    viewBox: [0, 0, width, height].join()},
-
+  return ['svg',
+    {
+      width: width + 'mm',
+      height: height + 'mm',
+      viewBox: [0, 0, width, height],
+    },
     ['path', {
       d: 'M7,0' +
         'h200' +

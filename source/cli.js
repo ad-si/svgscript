@@ -20,65 +20,65 @@ const flags = {}
 
 function compileIcons (iconPaths) {
 
-	svgScript
-		.getIcons(iconPaths)
-		.forEach(icon => {
+  svgScript
+    .getIcons(iconPaths)
+    .forEach(icon => {
 
-			var content = formatSvg(icon.content)
+      var content = formatSvg(icon.content)
 
-			if (flags.beautify)
-				content = beautifyHtml(content)
+      if (flags.beautify)
+        content = beautifyHtml(content)
 
-			if (!/\n$/.test(content))
-				content += '\n'
+      if (!/\n$/.test(content))
+        content += '\n'
 
-			fsp
-				.writeFile(icon.filePath, content)
-				.then(function () {
-					console.log(chalk.green('Created', icon.fileName))
-				})
-				.catch(function (error) {
-					console.error(chalk.red(error))
-				})
-		})
+      fsp
+        .writeFile(icon.filePath, content)
+        .then(function () {
+          console.log(chalk.green('Created', icon.fileName))
+        })
+        .catch(function (error) {
+          console.error(chalk.red(error))
+        })
+    })
 }
 
 
 args.forEach(function (cliArgument) {
-	if (/^\-\-/i.test(cliArgument)) {
-		return flags[cliArgument.slice(2)] = true
-	}
+  if (/^\-\-/i.test(cliArgument)) {
+    return flags[cliArgument.slice(2)] = true
+  }
 })
 
 
 if (args[0] === 'compile' || args[0] === 'watch') {
 
-	compileIcons(absoluteIconsPath)
+  compileIcons(absoluteIconsPath)
 
-	if (args[0] === 'watch') {
+  if (args[0] === 'watch') {
 
-		chokidar
-			.watch(absoluteIconsPath, {
-				ignored: /[\/\\]\./,
-				persistent: true
-			})
-			.on('change', function (path) {
-				compileIcons(path)
-			})
-			.on('error', function (error) {
-				throw error
-			})
-	}
+    chokidar
+      .watch(absoluteIconsPath, {
+        ignored: /[\/\\]\./,
+        persistent: true
+      })
+      .on('change', function (path) {
+        compileIcons(path)
+      })
+      .on('error', function (error) {
+        throw error
+      })
+  }
 }
 else if (args[0] === 'make') {
-	svgScript.make(absoluteIconsPath)
+  svgScript.make(absoluteIconsPath)
 }
 else if (args[0] === 'serve') {
-	svgScriptServer(absoluteIconsPath)
+  svgScriptServer(absoluteIconsPath)
 }
 else {
 
-	console.error('Usage: ' + commandName + ' compile <path-to-file/dir>')
+  console.error('Usage: ' + commandName + ' compile <path-to-file/dir>')
 
-	process.exit(1)
+  process.exit(1)
 }

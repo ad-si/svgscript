@@ -1,170 +1,170 @@
 var fs = require('fs'),
-	shaven = require('shaven'),
-	yaml = require('js-yaml'),
-	path = require('path'),
-	rimraf = require('rimraf'),
+  shaven = require('shaven'),
+  yaml = require('js-yaml'),
+  path = require('path'),
+  rimraf = require('rimraf'),
 
-	svgScript = require('./public/svgScript')
+  svgScript = require('./public/svgScript')
 
 
 module.exports = function (grunt) {
 
-	var icons = [],
-		iconsDirectory = grunt.option('path')
+  var icons = [],
+    iconsDirectory = grunt.option('path')
 
-	if(!iconsDirectory)
-		throw new Error('You must speficy an icons directory')
+  if(!iconsDirectory)
+    throw new Error('You must speficy an icons directory')
 
-	function formatSvg (svgString) {
+  function formatSvg (svgString) {
 
-		var missingNamespaces = []
+    var missingNamespaces = []
 
-		if (svgString.indexOf('/2000/svg') === -1)
-			missingNamespaces
-				.push('xmlns="http://www.w3.org/2000/svg"')
+    if (svgString.indexOf('/2000/svg') === -1)
+      missingNamespaces
+        .push('xmlns="http://www.w3.org/2000/svg"')
 
-		if (svgString.indexOf('/1999/xlink') === -1)
-			missingNamespaces
-				.push('xmlns:xlink="http://www.w3.org/1999/xlink"')
+    if (svgString.indexOf('/1999/xlink') === -1)
+      missingNamespaces
+        .push('xmlns:xlink="http://www.w3.org/1999/xlink"')
 
-		if (missingNamespaces !== [])
-			svgString = svgString.replace(
-				'<svg', '<svg ' + missingNamespaces.join(' ')
-			)
+    if (missingNamespaces !== [])
+      svgString = svgString.replace(
+        '<svg', '<svg ' + missingNamespaces.join(' ')
+      )
 
-		return svgString
-	}
+    return svgString
+  }
 
-	grunt.config.init({
-		svg2png: {
-			all: {
-				files: [
-					{
-						cwd: 'build/svg/',
-						src: ['**/*.svg'],
-						dest: 'build/png',
-						ext: 'png'
-					}
-				]
-			}
-		},
-		nodewebkit: {
-			options: {
-				platforms: ['osx'],
-				buildDir: './webkitbuilds'
-			},
-			src: ['./public/**/*']
-		}
-	})
+  grunt.config.init({
+    svg2png: {
+      all: {
+        files: [
+          {
+            cwd: 'build/svg/',
+            src: ['**/*.svg'],
+            dest: 'build/png',
+            ext: 'png'
+          }
+        ]
+      }
+    },
+    nodewebkit: {
+      options: {
+        platforms: ['osx'],
+        buildDir: './webkitbuilds'
+      },
+      src: ['./public/**/*']
+    }
+  })
 
-	grunt.loadNpmTasks('grunt-svg2png')
-	grunt.loadNpmTasks('grunt-node-webkit-builder')
-
-
-	grunt.registerTask('default', ['svg', 'png'])
-
-	grunt.registerTask(
-		'svg',
-		'Writes SVG files to build directory',
-		function () {
-
-			var fileContent,
-				deployment
-
-			// Remove build folder
-			rimraf.sync('./build')
-
-			try {
-				fileContent = fs.readFileSync(
-					path.join(iconsDirectory, 'deployment.yaml')
-				)
-				deployment = yaml.safeLoad(fileContent)
-			}
-			catch (error) {
-				if (error.code !== 'ENOENT')
-					throw error
-			}
+  grunt.loadNpmTasks('grunt-svg2png')
+  grunt.loadNpmTasks('grunt-node-webkit-builder')
 
 
-			if (deployment) {
+  grunt.registerTask('default', ['svg', 'png'])
 
-				deployment.icons.forEach(function (icon) {
+  grunt.registerTask(
+    'svg',
+    'Writes SVG files to build directory',
+    function () {
 
-					var iconModule = require(iconsDirectory + '/' + icon.fileName),
-						returnValue
+      var fileContent,
+        deployment
 
-					if (icon.skip)
-						return
+      // Remove build folder
+      rimraf.sync('./build')
 
-					icon.targets.forEach(function (targetData, index) {
-
-						var fileName,
-							scale = ''
-
-
-						if (targetData.scale > 0) {
-							scale = '@' + targetData.scale + 'x'
-							fileName = icon
-								.fileName
-								.replace(/\.js$/i, scale + '.svg')
-						}
-						else
-							fileName = icon
-								.fileName
-								.replace(/\.js$/i,
-								(index === 0 ? '' : index) + '.svg')
+      try {
+        fileContent = fs.readFileSync(
+          path.join(iconsDirectory, 'deployment.yaml')
+        )
+        deployment = yaml.safeLoad(fileContent)
+      }
+      catch (error) {
+        if (error.code !== 'ENOENT')
+          throw error
+      }
 
 
-						grunt.log.write('Write icon', fileName)
+      if (deployment) {
 
-						if (iconModule.shaven)
-							returnValue = shaven(
-								iconModule.shaven(targetData)
-							)[0]
+        deployment.icons.forEach(function (icon) {
 
-						//else if (typeof iconModule() !== 'string')
-						//	returnValue = shaven(iconModule(targetData))[0]
+          var iconModule = require(iconsDirectory + '/' + icon.fileName),
+            returnValue
 
-						else
-							returnValue = iconModule(targetData)
+          if (icon.skip)
+            return
+
+          icon.targets.forEach(function (targetData, index) {
+
+            var fileName,
+              scale = ''
 
 
-						grunt.file.write(
-							('./build/svg/' + fileName),
-							formatSvg(returnValue)
-						)
+            if (targetData.scale > 0) {
+              scale = '@' + targetData.scale + 'x'
+              fileName = icon
+                .fileName
+                .replace(/\.js$/i, scale + '.svg')
+            }
+            else
+              fileName = icon
+                .fileName
+                .replace(/\.js$/i,
+                (index === 0 ? '' : index) + '.svg')
 
-						grunt.log.ok()
-					})
-				})
-			}
-			else {
-				svgScript
-					.getIcons(path.join(__dirname, iconsDirectory))
-					.forEach(function (icon) {
 
-						grunt.log.write('Write icon', icon.basename + '.svg ')
+            grunt.log.write('Write icon', fileName)
 
-						grunt.file.write(
-							path.join('./build/svg', icon.basename + '.svg'),
-							formatSvg(icon.content)
-						)
+            if (iconModule.shaven)
+              returnValue = shaven(
+                iconModule.shaven(targetData)
+              )[0]
 
-						grunt.log.ok()
-					})
-			}
-		}
-	)
+            //else if (typeof iconModule() !== 'string')
+            //  returnValue = shaven(iconModule(targetData))[0]
 
-	grunt.registerTask(
-		'png',
-		'Converts SVG files to PNG and writes them to build directory',
-		['svg2png']
-	)
+            else
+              returnValue = iconModule(targetData)
 
-	grunt.registerTask(
-		'webkit',
-		'Builds node-webkit app',
-		['node-webkit-builder']
-	)
+
+            grunt.file.write(
+              ('./build/svg/' + fileName),
+              formatSvg(returnValue)
+            )
+
+            grunt.log.ok()
+          })
+        })
+      }
+      else {
+        svgScript
+          .getIcons(path.join(__dirname, iconsDirectory))
+          .forEach(function (icon) {
+
+            grunt.log.write('Write icon', icon.basename + '.svg ')
+
+            grunt.file.write(
+              path.join('./build/svg', icon.basename + '.svg'),
+              formatSvg(icon.content)
+            )
+
+            grunt.log.ok()
+          })
+      }
+    }
+  )
+
+  grunt.registerTask(
+    'png',
+    'Converts SVG files to PNG and writes them to build directory',
+    ['svg2png']
+  )
+
+  grunt.registerTask(
+    'webkit',
+    'Builds node-webkit app',
+    ['node-webkit-builder']
+  )
 }

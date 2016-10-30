@@ -9,30 +9,30 @@ const circleSection = require('./circleSection')
 
 
 module.exports = {
-	rgb: rgba,
-	rgba,
-	clone,
-	degToRad: deg2rad,
-	radToDeg: rad2deg,
-	optimizePath: (path) =>
-		new SvgPath(path)
-			.round(0)
-			.toString()
-	,
-	optimizePathAbsolute: (path) =>
-		new SvgPath(path)
-			.abs()
-			.round(0)
-			.toString()
-	,
-	optimizePathRelative: (path) =>
-		new SvgPath(path)
-			.abs()
-			.round(0)
-			.rel()
-			.round(0)
-			.toString()
-	,
-	circleSection,
-	formatSvg
+  rgb: rgba,
+  rgba,
+  clone,
+  degToRad: deg2rad,
+  radToDeg: rad2deg,
+  optimizePath: (path) =>
+    new SvgPath(path)
+      .round(0)
+      .toString()
+  ,
+  optimizePathAbsolute: (path) =>
+    new SvgPath(path)
+      .abs()
+      .round(0)
+      .toString()
+  ,
+  optimizePathRelative: (path) =>
+    new SvgPath(path)
+      .abs()
+      .round(0)
+      .rel()
+      .round(0)
+      .toString()
+  ,
+  circleSection,
+  formatSvg
 }

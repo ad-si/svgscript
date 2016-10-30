@@ -4,6 +4,10 @@
   "description": "Script svg files",
   "main": "server.js",
   "bin": "source/cli.js",
+  "scripts": {
+    "build": "grunt --path ./icons/misc",
+    "start": "node server.js",
+  },
   "keywords": [
     "svg"
   ],
@@ -33,10 +37,6 @@
     "socket.io": "^1.5.1",
     "svgpath": "^2.2.0",
     "traverse": "^0.6.6"
-  },
-  "scripts": {
-    "build": "grunt --path ./icons/misc",
-    "start": "node server.js"
   },
   "repository": {
     "type": "git",

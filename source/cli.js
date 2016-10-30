@@ -20,7 +20,6 @@ function compileIcons (iconPaths) {
   svgScript
     .getIcons(iconPaths)
     .forEach(icon => {
-
       let content = formatSvg(icon.content)
 
       if (flags.beautify) content = beautifyHtml(content)

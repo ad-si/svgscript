@@ -8,7 +8,7 @@ const tools = require('./tools')
 const createIcon = require('./createIcon')
 
 
-module.expots = (makeFilePath) => {
+module.exports = (makeFilePath) => {
   const iconsDirectory = path.dirname(makeFilePath)
   let fileContent
   let deployment
@@ -28,44 +28,49 @@ module.expots = (makeFilePath) => {
   console.info('Write Icons:')
 
   deployment.icons.forEach(icon => {
-    const iconModule = require(iconsDirectory + '/' + icon.fileName)
+    const absoluteIconPath = path.resolve(iconsDirectory, icon.filePath)
+    const iconModule = require(absoluteIconPath)
 
     if (icon.skip) return
 
     icon.targets.forEach((targetData, index) => {
-      let fileName = icon.fileName
       let scale = ''
+      let absoluteTargetPath = absoluteIconPath.replace(
+        /(\.svg)?\.js$/i,
+        (index === 0 ? '' : index) + '.svg'
+      )
 
-      if (targetData.fileName) {
-        fileName = targetData.fileName + '.js'
-      }
-      else {
-        fileName = fileName.replace(
-          /\.js$/i,
-          (index === 0 ? '' : index) + '.js'
+      if (targetData.hasOwnProperty('fileName')) {
+        absoluteTargetPath = path.join(
+          absoluteTargetPath
+            .slice(0, -path.basename(absoluteTargetPath).length),
+          targetData.fileName
         )
+      }
+
+      if (targetData.hasOwnProperty('filePath')) {
+        absoluteTargetPath = path.resolve(iconsDirectory, targetData.filePath)
       }
 
       if (targetData.scale > 0) {
         scale = '@' + targetData.scale + 'x'
-        fileName = fileName.replace(/\.js$/i, scale + '.js')
+        absoluteTargetPath = absoluteTargetPath.replace(
+          /\.svg$/i,
+          scale + '.svg'
+        )
       }
 
+      // try {
+      //   fs.mkdirSync(path.join(iconsDirectory, 'build'))
+      // }
+      // catch (error) {
+      //   if (error.code !== 'EEXIST') throw error
+      // }
 
-      fileName = fileName.replace(/\.js$/i, '.svg')
-
-      try {
-        fs.mkdirSync(path.join(iconsDirectory, 'build'))
-        fs.mkdirSync(path.join(iconsDirectory, 'build/svg'))
-      }
-      catch (error) {
-        if (error.code !== 'EEXIST') throw error
-      }
-
-      process.stdout.write(' - ' + fileName)
+      process.stdout.write(' - ' + absoluteTargetPath)
 
       fs.writeFileSync(
-        path.join(iconsDirectory, 'build/svg', fileName),
+        absoluteTargetPath,
         tools.formatSvg(createIcon(
           icon.fileName,
           iconModule,

@@ -8,6 +8,7 @@ const chokidar = require('chokidar')
 const svgScript = require('./index')
 const svgScriptServer = require('./server')
 const formatSvg = require('./tools/formatSvg')
+const make = require('./make')
 
 const commandName = path.basename(process.argv[1])
 const args = process.argv.slice(2)
@@ -47,11 +48,9 @@ args.forEach(cliArgument => {
 
 
 if (args[0] === 'compile' || args[0] === 'watch') {
-
   compileIcons(absoluteIconsPath)
 
   if (args[0] === 'watch') {
-
     chokidar
       .watch(absoluteIconsPath, {
         ignored: /[\/\\]\./,
@@ -66,7 +65,7 @@ if (args[0] === 'compile' || args[0] === 'watch') {
   }
 }
 else if (args[0] === 'make') {
-  svgScript.make(absoluteIconsPath)
+  make(absoluteIconsPath)
 }
 else if (args[0] === 'serve') {
   svgScriptServer(absoluteIconsPath)

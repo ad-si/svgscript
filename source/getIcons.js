@@ -26,9 +26,8 @@ module.exports = (absoluteIconsDirectoryPath) => {
   }
 
   fileNames
-    .filter(fileName => fileName.search(/.*\.(js|coffee)/) > -1)
+    .filter(filePath => filePath.search(/.*\.(js|coffee)/) > -1)
     .forEach(iconPath => {
-
       iconPath = path.join(absoluteIconsDirectoryPath, iconPath)
       let name = path.basename(
         iconPath,
@@ -43,9 +42,9 @@ module.exports = (absoluteIconsDirectoryPath) => {
         const module = require(iconPath)
 
         icons.push({
-          fileName: name,
+          relativeFilePath: name,
           directoryName: absoluteIconsDirectoryPath,
-          filePath: path.join(absoluteIconsDirectoryPath, name),
+          absoluteFilePath: path.join(absoluteIconsDirectoryPath, name),
           content: createIcon(name, module),
         })
       }

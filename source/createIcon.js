@@ -49,9 +49,9 @@ module.exports = (name, iconModule, targetData) => {
       console.error(
         'Module ' + name + ' does not provide a suitable interface!'
       )
+      return
     }
   }
-
 
   return content
 }

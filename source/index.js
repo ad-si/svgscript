@@ -100,7 +100,7 @@ function createTransformationString (content) {
 		if (this.key === 'transform' && Array.isArray(value))
 			this.update(
 				value
-					.map(function (transformation) {
+					.map(transformation => {
 
 						var string = transformation.type + '(',
 							values = []
@@ -154,8 +154,17 @@ function createIcon (name, module, targetData) {
 			if (typeof content !== 'string')
 				throw new TypeError(name + '.svg() must return a string!')
 		}
+		else if (typeof module === 'function') {
+
+			content = module(targetData, tools)
+
+			if (typeof content !== 'string')
+				throw new TypeError(module + ' must return a string!')
+		}
 		else
-			console.error('Icon module does not provide a suitable interface!')
+			console.error(
+				'Module ' + name + ' does not provide a suitable interface!'
+			)
 	}
 
 
@@ -181,16 +190,11 @@ function getIcons (absoluteIconsDirectoryPath) {
 	}
 
 	fileNames
-		.filter(function (fileName) {
-			return fileName.search(/.*\.(js|coffee)/) > -1
-		})
-		.forEach(function (iconPath) {
-
-			var name,
-				module
+		.filter(fileName => fileName.search(/.*\.(js|coffee)/) > -1)
+		.forEach(iconPath => {
 
 			iconPath = path.join(absoluteIconsDirectoryPath, iconPath)
-			name = path.basename(
+			let name = path.basename(
 				iconPath,
 				path.extname(iconPath)
 			)
@@ -200,7 +204,7 @@ function getIcons (absoluteIconsDirectoryPath) {
 			delete require.cache[require.resolve(iconPath)]
 
 			try {
-				module = require(iconPath)
+				const module = require(iconPath)
 
 				icons.push({
 					fileName: name,

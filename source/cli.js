@@ -22,7 +22,7 @@ function compileIcons (iconPaths) {
 
 	svgScript
 		.getIcons(iconPaths)
-		.forEach(function (icon) {
+		.forEach(icon => {
 
 			var content = formatSvg(icon.content)
 

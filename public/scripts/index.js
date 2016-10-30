@@ -14,11 +14,11 @@ document
 	.addEventListener('click', () => toggleGrid())
 
 socket.on('icon', (data) => {
-	let iconContainer = window.document.querySelector('#' + data.fileName)
+	let iconContainer = window.document.querySelector('#' + data.basename)
 
 	if (!iconContainer) {
 		iconContainer = window.document.createElement('div')
-		iconContainer.id = 'data.fileName'
+		iconContainer.id = data.basename
 		iconContainer.classList.add('icon')
 		iconsContainer.appendChild(iconContainer)
 	}

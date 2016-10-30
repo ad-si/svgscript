@@ -76,9 +76,16 @@ module.exports = (iconsDirectory) => {
 		delete require.cache[require.resolve(iconPath)]
 
 		const basename = path.basename(iconPath, path.extname(iconPath))
-		return {
-			basename: basename,
-			content: svgScript.createIcon(basename, require(iconPath))
+
+		try {
+			const svgModule = require(iconPath)
+			return {
+				basename: basename,
+				content: svgScript.createIcon(basename, svgModule)
+			}
+		}
+		catch (error) {
+			console.error(error.stack)
 		}
 	}
 
@@ -86,6 +93,8 @@ module.exports = (iconsDirectory) => {
 		console.log('Websocket connection was established')
 		watcher
 			.on('change', iconPath => {
+				if (iconPath.startsWith('.'))
+					return
 				console.log(iconPath, 'changed')
 				socket.emit('icon', compileIcon(iconPath))
 			})

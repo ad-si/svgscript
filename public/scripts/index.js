@@ -1,11 +1,6 @@
-'use strict'
-
-const shaven = require('shaven')
-
 const toggleGrid = require('./toggleGrid')
 
-const gridVisibility = false
-const socket = io()
+const socket = io() // eslint-disable-line no-undef
 const iconsContainer = window.document.querySelector('#icons')
 
 

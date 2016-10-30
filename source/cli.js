@@ -1,7 +1,5 @@
 #! /usr/bin/env node
 
-'use strict'
-
 const fsp = require('fs-promise')
 const path = require('path')
 const chalk = require('chalk')
@@ -19,32 +17,30 @@ const flags = {}
 
 
 function compileIcons (iconPaths) {
-
   svgScript
     .getIcons(iconPaths)
     .forEach(icon => {
 
-      var content = formatSvg(icon.content)
+      let content = formatSvg(icon.content)
 
-      if (flags.beautify)
-        content = beautifyHtml(content)
-
-      if (!/\n$/.test(content))
-        content += '\n'
+      if (flags.beautify) content = beautifyHtml(content)
+      if (!/\n$/.test(content)) content += '\n'
 
       fsp
         .writeFile(icon.filePath, content)
-        .then(function () {
-          console.log(chalk.green('Created', icon.fileName))
+        .then(() => {
+          // eslint-disable-next-line no-console
+          console.info(chalk.green('Created', icon.fileName))
         })
-        .catch(function (error) {
+        .catch(error => {
+          // eslint-disable-next-line no-console
           console.error(chalk.red(error))
         })
     })
 }
 
 
-args.forEach(function (cliArgument) {
+args.forEach(cliArgument => {
   if (/^\-\-/i.test(cliArgument)) {
     return flags[cliArgument.slice(2)] = true
   }
@@ -60,12 +56,12 @@ if (args[0] === 'compile' || args[0] === 'watch') {
     chokidar
       .watch(absoluteIconsPath, {
         ignored: /[\/\\]\./,
-        persistent: true
+        persistent: true,
       })
-      .on('change', function (path) {
-        compileIcons(path)
+      .on('change', iconsPath => {
+        compileIcons(iconsPath)
       })
-      .on('error', function (error) {
+      .on('error', error => {
         throw error
       })
   }
@@ -77,7 +73,7 @@ else if (args[0] === 'serve') {
   svgScriptServer(absoluteIconsPath)
 }
 else {
-
+  // eslint-disable-next-line no-console
   console.error('Usage: ' + commandName + ' compile <path-to-file/dir>')
 
   process.exit(1)

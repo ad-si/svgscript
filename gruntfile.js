@@ -1,36 +1,35 @@
-var fs = require('fs'),
-  shaven = require('shaven'),
-  yaml = require('js-yaml'),
-  path = require('path'),
-  rimraf = require('rimraf'),
+const fs = require('fs')
+const shaven = require('shaven')
+const yaml = require('js-yaml')
+const path = require('path')
+const rimraf = require('rimraf')
 
-  svgScript = require('./public/svgScript')
+const svgScript = require('./public/svgScript')
 
 
 module.exports = function (grunt) {
+  const iconsDirectory = grunt.option('path')
 
-  var icons = [],
-    iconsDirectory = grunt.option('path')
-
-  if(!iconsDirectory)
+  if (!iconsDirectory) {
     throw new Error('You must speficy an icons directory')
+  }
 
   function formatSvg (svgString) {
+    const missingNamespaces = []
 
-    var missingNamespaces = []
-
-    if (svgString.indexOf('/2000/svg') === -1)
+    if (svgString.indexOf('/2000/svg') === -1) {
       missingNamespaces
         .push('xmlns="http://www.w3.org/2000/svg"')
-
-    if (svgString.indexOf('/1999/xlink') === -1)
+    }
+    if (svgString.indexOf('/1999/xlink') === -1) {
       missingNamespaces
         .push('xmlns:xlink="http://www.w3.org/1999/xlink"')
-
-    if (missingNamespaces !== [])
+    }
+    if (missingNamespaces !== []) {
       svgString = svgString.replace(
         '<svg', '<svg ' + missingNamespaces.join(' ')
       )
+    }
 
     return svgString
   }
@@ -43,18 +42,18 @@ module.exports = function (grunt) {
             cwd: 'build/svg/',
             src: ['**/*.svg'],
             dest: 'build/png',
-            ext: 'png'
-          }
-        ]
-      }
+            ext: 'png',
+          },
+        ],
+      },
     },
     nodewebkit: {
       options: {
         platforms: ['osx'],
-        buildDir: './webkitbuilds'
+        buildDir: './webkitbuilds',
       },
-      src: ['./public/**/*']
-    }
+      src: ['./public/**/*'],
+    },
   })
 
   grunt.loadNpmTasks('grunt-svg2png')
@@ -66,10 +65,9 @@ module.exports = function (grunt) {
   grunt.registerTask(
     'svg',
     'Writes SVG files to build directory',
-    function () {
-
-      var fileContent,
-        deployment
+    () => {
+      let fileContent
+      let deployment
 
       // Remove build folder
       rimraf.sync('./build')
@@ -81,26 +79,20 @@ module.exports = function (grunt) {
         deployment = yaml.safeLoad(fileContent)
       }
       catch (error) {
-        if (error.code !== 'ENOENT')
-          throw error
+        if (error.code !== 'ENOENT') throw error
       }
 
 
       if (deployment) {
+        deployment.icons.forEach(icon => {
+          const iconModule = require(iconsDirectory + '/' + icon.fileName)
+          let returnValue
 
-        deployment.icons.forEach(function (icon) {
+          if (icon.skip) return
 
-          var iconModule = require(iconsDirectory + '/' + icon.fileName),
-            returnValue
-
-          if (icon.skip)
-            return
-
-          icon.targets.forEach(function (targetData, index) {
-
-            var fileName,
-              scale = ''
-
+          icon.targets.forEach((targetData, index) => {
+            let fileName
+            let scale = ''
 
             if (targetData.scale > 0) {
               scale = '@' + targetData.scale + 'x'
@@ -108,29 +100,30 @@ module.exports = function (grunt) {
                 .fileName
                 .replace(/\.js$/i, scale + '.svg')
             }
-            else
+            else {
               fileName = icon
                 .fileName
                 .replace(/\.js$/i,
                 (index === 0 ? '' : index) + '.svg')
+            }
 
 
             grunt.log.write('Write icon', fileName)
 
-            if (iconModule.shaven)
+            if (iconModule.shaven) {
               returnValue = shaven(
                 iconModule.shaven(targetData)
               )[0]
+            }
 
-            //else if (typeof iconModule() !== 'string')
+            // else if (typeof iconModule() !== 'string')
             //  returnValue = shaven(iconModule(targetData))[0]
-
-            else
+            else {
               returnValue = iconModule(targetData)
-
+            }
 
             grunt.file.write(
-              ('./build/svg/' + fileName),
+              './build/svg/' + fileName,
               formatSvg(returnValue)
             )
 
@@ -141,8 +134,7 @@ module.exports = function (grunt) {
       else {
         svgScript
           .getIcons(path.join(__dirname, iconsDirectory))
-          .forEach(function (icon) {
-
+          .forEach(icon => {
             grunt.log.write('Write icon', icon.basename + '.svg ')
 
             grunt.file.write(

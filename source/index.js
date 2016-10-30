@@ -1,5 +1,3 @@
-'use strict'
-
 const fs = require('fs')
 const path = require('path')
 const shaven = require('shaven')
@@ -13,12 +11,10 @@ const tools = require('./tools')
 const coordinateSystemAxes = require('./tools/coordinateSystemAxes')
 
 
-
 function make (makeFilePath) {
-
-  var iconsDirectory = path.dirname(makeFilePath),
-    fileContent,
-    deployment
+  const iconsDirectory = path.dirname(makeFilePath)
+  let fileContent
+  let deployment
 
   // Remove build folder
   rimraf.sync(path.join(path.dirname(makeFilePath), 'build'))
@@ -28,32 +24,30 @@ function make (makeFilePath) {
     deployment = yaml.safeLoad(fileContent)
   }
   catch (error) {
-    if (error.code !== 'ENOENT')
-      throw error
+    if (error.code !== 'ENOENT') throw error
   }
 
-  console.log('Write Icons:')
+  // eslint-disable-next-line no-console
+  console.info('Write Icons:')
 
-  deployment.icons.forEach(function (icon) {
+  deployment.icons.forEach(icon => {
+    const iconModule = require(iconsDirectory + '/' + icon.fileName)
 
-    var iconModule = require(iconsDirectory + '/' + icon.fileName)
+    if (icon.skip) return
 
-    if (icon.skip)
-      return
+    icon.targets.forEach((targetData, index) => {
+      let fileName = icon.fileName
+      let scale = ''
 
-    icon.targets.forEach(function (targetData, index) {
-
-      var fileName = icon.fileName,
-        scale = ''
-
-
-      if (targetData.fileName)
+      if (targetData.fileName) {
         fileName = targetData.fileName + '.js'
-      else
+      }
+      else {
         fileName = fileName.replace(
           /\.js$/i,
           (index === 0 ? '' : index) + '.js'
         )
+      }
 
       if (targetData.scale > 0) {
         scale = '@' + targetData.scale + 'x'
@@ -68,22 +62,22 @@ function make (makeFilePath) {
         fs.mkdirSync(path.join(iconsDirectory, 'build/svg'))
       }
       catch (error) {
-        if (error.code !== 'EEXIST')
-          throw error
+        if (error.code !== 'EEXIST') throw error
       }
 
       process.stdout.write(' - ' + fileName)
 
       fs.writeFileSync(
         path.join(iconsDirectory, 'build/svg', fileName),
-        svgKit.formatSvg(createIcon(
+        tools.formatSvg(createIcon(
           icon.fileName,
           iconModule,
           targetData
         ))
       )
 
-      console.log(chalk.green(' ✔'))
+      // eslint-disable-next-line no-console
+      console.info(chalk.green(' ✔'))
     })
   })
 }
@@ -92,79 +86,80 @@ function createTransformationString (content) {
 
   // Create transformation string from transformation objects
 
-  return traverse(content).forEach(function (value) {
+  return traverse(content)
+    .forEach(value => {
+      if (typeof value === 'number') {
+        this.update(parseFloat(value.toFixed(15)))
+      }
 
-    if (typeof value === 'number')
-      this.update(parseFloat(value.toFixed(15)))
+      if (this.key === 'transform' && Array.isArray(value)) {
+        this.update(
+          value
+            .map(transformation => {
+              let string = transformation.type + '('
+              const values = []
 
-    if (this.key === 'transform' && Array.isArray(value))
-      this.update(
-        value
-          .map(transformation => {
+              if (transformation.type === 'rotate') {
+                values.push(transformation.degrees || 0)
+              }
+              if (transformation.x) {
+                values.push(transformation.x)
+              }
+              if (transformation.y) {
+                values.push(transformation.y)
+              }
 
-            var string = transformation.type + '(',
-              values = []
+              string += values.join()
+              string += ')'
 
-            if (transformation.type === 'rotate')
-              values.push(transformation.degrees || 0)
-
-            if (transformation.x)
-              values.push(transformation.x)
-
-            if (transformation.y)
-              values.push(transformation.y)
-
-            string += values.join()
-            string += ')'
-
-            return string
-          })
-          .join(' ')
-      )
-  })
+              return string
+            })
+            .join(' ')
+        )
+      }
+    })
 }
 
 
 function createIcon (name, module, targetData) {
+  let content
 
-  var content
-
-  if (!module)
+  if (!module) {
     throw new Error('Module ' + name + ' was not passed to createIcon().')
+  }
 
   if (!module.targetVersion || semver.lt(module.targetVersion, '0.4.0')) {
-
     if (module.shaven) {
-
       content = module.shaven(targetData, tools)
 
-      if (!Array.isArray(content))
+      if (!Array.isArray(content)) {
         throw new TypeError(name + '.shaven() must return an array!')
+      }
 
       content = createTransformationString(content)
-
       content.push(coordinateSystemAxes)
-
       content = shaven(content)[0]
     }
     else if (module.svg) {
-
       content = module.svg(targetData, tools)
 
-      if (typeof content !== 'string')
+      if (typeof content !== 'string') {
         throw new TypeError(name + '.svg() must return a string!')
+      }
     }
     else if (typeof module === 'function') {
-
       content = module(targetData, tools)
 
-      if (typeof content !== 'string')
+      if (typeof content !== 'string') {
         throw new TypeError(module + ' must return a string!')
+      }
     }
-    else
+    else {
+      // eslint-disable-next-line no-console
       console.error(
         'Module ' + name + ' does not provide a suitable interface!'
       )
+    }
   }
 
 
@@ -173,7 +168,7 @@ function createIcon (name, module, targetData) {
 
 function getIcons (absoluteIconsDirectoryPath) {
 
-  let icons = []
+  const icons = []
   let fileNames
 
   absoluteIconsDirectoryPath = absoluteIconsDirectoryPath || path.resolve(
@@ -181,7 +176,11 @@ function getIcons (absoluteIconsDirectoryPath) {
     '../test/printerBed.js'
   )
 
-  if (fs.statSync(absoluteIconsDirectoryPath).isFile()) {
+  const isFile = fs
+    .statSync(absoluteIconsDirectoryPath)
+    .isFile()
+
+  if (isFile) {
     fileNames = [path.basename(absoluteIconsDirectoryPath)]
     absoluteIconsDirectoryPath = path.dirname(absoluteIconsDirectoryPath)
   }
@@ -210,10 +209,11 @@ function getIcons (absoluteIconsDirectoryPath) {
           fileName: name,
           directoryName: absoluteIconsDirectoryPath,
           filePath: path.join(absoluteIconsDirectoryPath, name),
-          content: createIcon(name, module)
+          content: createIcon(name, module),
         })
       }
       catch (error) {
+        // eslint-disable-next-line no-console
         console.error(error.stack)
       }
     })
@@ -223,7 +223,7 @@ function getIcons (absoluteIconsDirectoryPath) {
 
 
 module.exports = {
-  getIcons: getIcons,
-  createIcon: createIcon,
-  make: make
+  getIcons,
+  createIcon,
+  make,
 }

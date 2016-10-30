@@ -17,22 +17,19 @@ module.exports = {
   optimizePath: (path) =>
     new SvgPath(path)
       .round(0)
-      .toString()
-  ,
+      .toString(),
   optimizePathAbsolute: (path) =>
     new SvgPath(path)
       .abs()
       .round(0)
-      .toString()
-  ,
+      .toString(),
   optimizePathRelative: (path) =>
     new SvgPath(path)
       .abs()
       .round(0)
       .rel()
       .round(0)
-      .toString()
-  ,
+      .toString(),
   circleSection,
-  formatSvg
+  formatSvg,
 }

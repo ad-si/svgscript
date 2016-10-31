@@ -13,23 +13,17 @@ module.exports = (content) => {
         this.update(
           value
             .map(transformation => {
-              let string = transformation.type + '('
               const values = []
 
               if (transformation.type === 'rotate') {
                 values.push(transformation.degrees || 0)
               }
-              if (transformation.x) {
-                values.push(transformation.x)
-              }
-              if (transformation.y) {
-                values.push(transformation.y)
+              if (transformation.type === 'translate') {
+                values.push(transformation.x || 0)
+                values.push(transformation.y || 0)
               }
 
-              string += values.join()
-              string += ')'
-
-              return string
+              return `${transformation.type}(${values})`
             })
             .join(' ')
         )

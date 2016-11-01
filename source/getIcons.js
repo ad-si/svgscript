@@ -39,13 +39,13 @@ module.exports = (absoluteIconsDirectoryPath) => {
       delete require.cache[require.resolve(iconPath)]
 
       try {
-        const module = require(iconPath)
+        const iconModule = require(iconPath)
 
         icons.push({
           relativeFilePath: name,
           directoryName: absoluteIconsDirectoryPath,
           absoluteFilePath: path.join(absoluteIconsDirectoryPath, name),
-          content: createIcon(name, module),
+          content: createIcon(name, iconModule),
         })
       }
       catch (error) {

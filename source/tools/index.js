@@ -6,6 +6,7 @@ const SvgPath = require('svgpath')
 const rgba = require('./rgba.js')
 const formatSvg = require('./formatSvg')
 const circleSection = require('./circleSection')
+const arrangeAsGrid = require('./arrangeAsGrid')
 
 
 module.exports = {
@@ -32,4 +33,5 @@ module.exports = {
       .toString(),
   circleSection,
   formatSvg,
+  arrangeAsGrid,
 }

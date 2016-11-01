@@ -21,20 +21,22 @@ function compileIcons (iconPaths) {
   svgScript
     .getIcons(iconPaths)
     .forEach(icon => {
+      if (!icon.content) return
+
       let content = formatSvg(icon.content)
 
       if (flags.beautify) content = beautifyHtml(content)
       if (!/\n$/.test(content)) content += '\n'
 
       fsp
-        .writeFile(icon.filePath, content)
+        .writeFile(icon.absoluteFilePath, content)
         .then(() => {
           // eslint-disable-next-line no-console
-          console.info(chalk.green('Created', icon.fileName))
+          console.info(chalk.green('Created', icon.relativeFilePath))
         })
         .catch(error => {
           // eslint-disable-next-line no-console
-          console.error(chalk.red(error))
+          console.error(chalk.red(error.stack))
         })
     })
 }

@@ -7,6 +7,7 @@ const rgba = require('./rgba.js')
 const formatSvg = require('./formatSvg')
 const circleSection = require('./circleSection')
 const arrangeAsGrid = require('./arrangeAsGrid')
+const businessCard = require('./businessCard')
 
 
 module.exports = {
@@ -34,4 +35,5 @@ module.exports = {
   circleSection,
   formatSvg,
   arrangeAsGrid,
+  businessCard,
 }

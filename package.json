@@ -5,7 +5,6 @@
   "main": "server.js",
   "bin": "source/cli.js",
   "scripts": {
-    "build": "grunt --path ./icons/misc",
     "start": "node server.js",
     "test": "node tests/main.js"
   },
@@ -24,9 +23,6 @@
     "deg2rad": "^1.0.0",
     "express": "^4.14.0",
     "fs-promise": "^0.5.0",
-    "grunt": "^1.0.1",
-    "grunt-cli": "^1.2.0",
-    "grunt-svg2png": "^0.2.7",
     "hull.js": "^0.2.10",
     "js-beautify": "^1.6.4",
     "js-yaml": "^3.6.1",

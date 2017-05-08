@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-const fsp = require('fs-promise')
+const fse = require('fs-extra')
 const path = require('path')
 const chalk = require('chalk')
 const chokidar = require('chokidar')
@@ -28,7 +28,7 @@ function compileIcons (iconPaths) {
       if (flags.beautify) content = beautifyHtml(content)
       if (!/\n$/.test(content)) content += '\n'
 
-      fsp
+      fse
         .writeFile(icon.absoluteFilePath, content)
         .then(() => {
           // eslint-disable-next-line no-console

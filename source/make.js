@@ -1,8 +1,11 @@
-const fs = require('fs')
 const path = require('path')
+
+const fse = require('fs-extra')
 const rimraf = require('rimraf')
 const yaml = require('js-yaml')
 const chalk = require('chalk')
+const Svgo = require('svgo')
+const svgo = new Svgo()
 
 const tools = require('./tools')
 const createIcon = require('./createIcon')
@@ -17,14 +20,13 @@ module.exports = (makeFilePath) => {
   rimraf.sync(path.join(path.dirname(makeFilePath), 'build'))
 
   try {
-    fileContent = fs.readFileSync(makeFilePath)
+    fileContent = fse.readFileSync(makeFilePath)
     deployment = yaml.safeLoad(fileContent)
   }
   catch (error) {
     if (error.code !== 'ENOENT') throw error
   }
 
-  // eslint-disable-next-line no-console
   console.info('Write Icons:')
 
   deployment.icons.forEach(icon => {
@@ -60,17 +62,7 @@ module.exports = (makeFilePath) => {
         )
       }
 
-      // try {
-      //   fs.mkdirSync(path.join(iconsDirectory, 'build'))
-      // }
-      // catch (error) {
-      //   if (error.code !== 'EEXIST') throw error
-      // }
-
-      process.stdout.write(' - ' + absoluteTargetPath)
-
-      fs.writeFileSync(
-        absoluteTargetPath,
+      let svgPromise = Promise.resolve(
         tools.formatSvg(createIcon(
           icon.fileName,
           iconModule,
@@ -78,8 +70,18 @@ module.exports = (makeFilePath) => {
         ))
       )
 
-      // eslint-disable-next-line no-console
-      console.info(chalk.green(' ✔'))
+      if (targetData.minify) {
+        svgPromise = svgPromise
+          .then(svg => svgo.optimize(svg))
+          .then(result => result.data)
+      }
+
+      svgPromise
+        .then(svg => fse.writeFile(absoluteTargetPath, svg))
+        .then(() =>
+          console.info(` - ${absoluteTargetPath} ${chalk.green('✔')}`)
+        )
+        .catch(console.error)
     })
   })
 }

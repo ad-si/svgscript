@@ -1,3 +1,5 @@
+/* eslint-disable id-length */
+
 module.exports = (options = {}) => {
   const {
     color = 'rgb(127, 127, 127)',
@@ -23,8 +25,8 @@ module.exports = (options = {}) => {
       {
         width: cornerLength,
         height: cornerLength,
-        'x': -marginLeft,
-        'y': -marginTop,
+        x: -marginLeft,
+        y: -marginTop,
       },
       viewSwitches[0],
     ],
@@ -32,8 +34,8 @@ module.exports = (options = {}) => {
       {
         width: cornerLength,
         height: cornerLength,
-        'x': (width - cornerLength) + marginRight,
-        'y': -marginTop,
+        x: (width - cornerLength) + marginRight,
+        y: -marginTop,
       },
       viewSwitches[1],
     ],
@@ -41,8 +43,8 @@ module.exports = (options = {}) => {
       {
         width: cornerLength,
         height: cornerLength,
-        'x': (width - cornerLength) + marginRight,
-        'y': (height - cornerLength) + marginBottom,
+        x: (width - cornerLength) + marginRight,
+        y: (height - cornerLength) + marginBottom,
       },
       viewSwitches[2],
     ],
@@ -50,8 +52,8 @@ module.exports = (options = {}) => {
       {
         width: cornerLength,
         height: cornerLength,
-        'x': -marginLeft,
-        'y': (height - cornerLength) + marginBottom,
+        x: -marginLeft,
+        y: (height - cornerLength) + marginBottom,
       },
       viewSwitches[3],
     ],

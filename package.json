@@ -6,7 +6,9 @@
   "bin": "source/cli.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node tests/main.js"
+    "lint": "eslint --max-warnings 0 .",
+    "unit-tests": "node tests/main.js",
+    "test": "yarn lint && yarn unit-tests"
   },
   "keywords": [
     "svg"
@@ -24,6 +26,8 @@
     "cssobj-core": "^1.1.3",
     "cssobj-plugin-gencss": "^2.0.5",
     "deg2rad": "^1.0.0",
+    "eslint": "^3.19.0",
+    "eslint-config-javascript": "^1.3.0",
     "express": "^4.15.2",
     "fs-promise": "^2.0.0",
     "js-beautify": "^1.6.11",
@@ -44,4 +48,7 @@
     "url": "https://github.com/adius/svgscript"
   },
   "homepage": "https://github.com/adius/svgscript",
+  "eslintConfig": {
+    "extends": "eslint-config-javascript"
+  }
 }

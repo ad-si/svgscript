@@ -13,7 +13,6 @@ function orthoLine (options = {}) {
 }
 
 module.exports = (printOptions = {}) => {
-
   if (printOptions.cutView) {
     printOptions.gridMargin = 0
     printOptions.cellMargin = 0
@@ -62,6 +61,8 @@ module.exports = (printOptions = {}) => {
   const gridCells = []
   const cutMarks = []
 
+  /* eslint-disable id-length */
+
   for (let row = 0; row < rows; row++) {
     for (let column = 0; column < columns; column++) {
       const topLeftCornerX = (totalCellWidth * column) + cellMarginLeft
@@ -77,8 +78,8 @@ module.exports = (printOptions = {}) => {
         {
           transform: [{
             type: 'translate',
-            'x': topLeftCornerX,
-            'y': topLeftCornerY,
+            x: topLeftCornerX,
+            y: topLeftCornerY,
           }],
         },
       ]
@@ -110,28 +111,28 @@ module.exports = (printOptions = {}) => {
           // Horizontal marks
           // Left
           cutMarks.push(orthoLine({
-            'x': topLeftCornerX,
-            'y': topLeftCornerY,
-            'h': cutMarksLength / 2,
+            x: topLeftCornerX,
+            y: topLeftCornerY,
+            h: cutMarksLength / 2,
           }))
           // Right
           cutMarks.push(orthoLine({
-            'x': topLeftCornerX + totalCellWidth,
-            'y': topLeftCornerY,
-            'h': - cutMarksLength / 2,
+            x: topLeftCornerX + totalCellWidth,
+            y: topLeftCornerY,
+            h: - cutMarksLength / 2,
           }))
           if (isLastRow) {
             // Left
             cutMarks.push(orthoLine({
-              'x': topLeftCornerX,
-              'y': topLeftCornerY + totalCellHeight,
-              'h': cutMarksLength / 2,
+              x: topLeftCornerX,
+              y: topLeftCornerY + totalCellHeight,
+              h: cutMarksLength / 2,
             }))
             // Right
             cutMarks.push(orthoLine({
-              'x': topLeftCornerX + totalCellWidth,
-              'y': topLeftCornerY + totalCellHeight,
-              'h': - cutMarksLength / 2,
+              x: topLeftCornerX + totalCellWidth,
+              y: topLeftCornerY + totalCellHeight,
+              h: - cutMarksLength / 2,
             }))
           }
 
@@ -139,30 +140,30 @@ module.exports = (printOptions = {}) => {
           // Top
           if (isFirstRow) {
             cutMarks.push(orthoLine({
-              'x': topLeftCornerX,
-              'y': topLeftCornerY - play,
-              'v': -cutMarksLength / 2,
+              x: topLeftCornerX,
+              y: topLeftCornerY - play,
+              v: -cutMarksLength / 2,
             }))
             if (isLastColumn) {
               cutMarks.push(orthoLine({
-                'x': topLeftCornerX + totalCellWidth,
-                'y': topLeftCornerY - play,
-                'v': - cutMarksLength / 2,
+                x: topLeftCornerX + totalCellWidth,
+                y: topLeftCornerY - play,
+                v: - cutMarksLength / 2,
               }))
             }
           }
           // Bottom
           if (isLastRow) {
             cutMarks.push(orthoLine({
-              'x': topLeftCornerX,
-              'y': topLeftCornerY  + totalCellHeight + play,
-              'v': cutMarksLength / 2,
+              x: topLeftCornerX,
+              y: topLeftCornerY  + totalCellHeight + play,
+              v: cutMarksLength / 2,
             }))
             if (isLastColumn) {
               cutMarks.push(orthoLine({
-                'x': topLeftCornerX + totalCellWidth,
-                'y': topLeftCornerY  + totalCellHeight + play,
-                'v': cutMarksLength / 2,
+                x: topLeftCornerX + totalCellWidth,
+                y: topLeftCornerY  + totalCellHeight + play,
+                v: cutMarksLength / 2,
               }))
             }
           }
@@ -172,28 +173,28 @@ module.exports = (printOptions = {}) => {
           // Veritcal Marks
           // Top
           cutMarks.push(orthoLine({
-            'x': topLeftCornerX,
-            'y': topLeftCornerY,
-            'v': cutMarksLength / 2,
+            x: topLeftCornerX,
+            y: topLeftCornerY,
+            v: cutMarksLength / 2,
           }))
           // Bottom
           cutMarks.push(orthoLine({
-            'x': topLeftCornerX,
-            'y': topLeftCornerY + totalCellHeight,
-            'v': - cutMarksLength / 2,
+            x: topLeftCornerX,
+            y: topLeftCornerY + totalCellHeight,
+            v: - cutMarksLength / 2,
           }))
           if (isLastColumn) {
             // Top
             cutMarks.push(orthoLine({
-              'x': topLeftCornerX + totalCellWidth,
-              'y': topLeftCornerY,
-              'v': cutMarksLength / 2,
+              x: topLeftCornerX + totalCellWidth,
+              y: topLeftCornerY,
+              v: cutMarksLength / 2,
             }))
             // Bottom
             cutMarks.push(orthoLine({
-              'x': topLeftCornerX + totalCellWidth,
-              'y': topLeftCornerY + totalCellHeight,
-              'v': - cutMarksLength / 2,
+              x: topLeftCornerX + totalCellWidth,
+              y: topLeftCornerY + totalCellHeight,
+              v: - cutMarksLength / 2,
             }))
           }
 
@@ -201,30 +202,30 @@ module.exports = (printOptions = {}) => {
           // Left
           if (isFirstColumn) {
             cutMarks.push(orthoLine({
-              'x': topLeftCornerX - play,
-              'y': topLeftCornerY,
-              'h': -cutMarksLength / 2,
+              x: topLeftCornerX - play,
+              y: topLeftCornerY,
+              h: -cutMarksLength / 2,
             }))
             if (isLastRow) {
               cutMarks.push(orthoLine({
-                'x': topLeftCornerX - play,
-                'y': topLeftCornerY + totalCellHeight,
-                'h': - cutMarksLength / 2,
+                x: topLeftCornerX - play,
+                y: topLeftCornerY + totalCellHeight,
+                h: - cutMarksLength / 2,
               }))
             }
           }
           // Right
           if (isLastColumn) {
             cutMarks.push(orthoLine({
-              'x': topLeftCornerX + totalCellWidth + play,
-              'y': topLeftCornerY,
-              'h': cutMarksLength / 2,
+              x: topLeftCornerX + totalCellWidth + play,
+              y: topLeftCornerY,
+              h: cutMarksLength / 2,
             }))
             if (isLastRow) {
               cutMarks.push(orthoLine({
-                'x': topLeftCornerX + totalCellWidth + play,
-                'y': topLeftCornerY + totalCellHeight,
-                'h': cutMarksLength / 2,
+                x: topLeftCornerX + totalCellWidth + play,
+                y: topLeftCornerY + totalCellHeight,
+                h: cutMarksLength / 2,
               }))
             }
           }
@@ -243,8 +244,8 @@ module.exports = (printOptions = {}) => {
       transform: cx || cy
         ? [{
           type: 'translate',
-          'x': cx - (totalGridWidth / 2) || 0,
-          'y': cy - (totalGridHeight / 2) || 0,
+          x: cx - (totalGridWidth / 2) || 0,
+          y: cy - (totalGridHeight / 2) || 0,
         }]
         : false,
     },
@@ -273,8 +274,8 @@ module.exports = (printOptions = {}) => {
     {
       transform: [{
         type: 'translate',
-        'x': gridMarginLeft,
-        'y': gridMarginTop,
+        x: gridMarginLeft,
+        y: gridMarginTop,
       }],
     },
     ...gridCells,

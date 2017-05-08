@@ -21,9 +21,7 @@ module.exports = () => {
         'beforeend',
         shaven(
           ['svg#definitions',
-            ['defs',
-              grid,
-          ],
+            ['defs', grid],
           ],
           'http://www.w3.org/2000/svg'
         )[0]

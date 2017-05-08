@@ -5,7 +5,10 @@ module.exports.shaven = (options = {}, tools) => {
     cutView: true,
     cardGraphic: [
       'path#card',
-      {'d': 'M0,0 h5 v7 h3 v6'},
+      {
+        // eslint-disable-next-line id-length
+        d: 'M0,0 h5 v7 h3 v6',
+      },
     ],
   })
 }

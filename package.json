@@ -1,6 +1,6 @@
 {
   "name": "svgscript",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Script SVG files",
   "main": "server.js",
   "bin": "source/cli.js",

@@ -43,7 +43,7 @@ function compileIcons (iconPaths) {
 
 
 args.forEach(cliArgument => {
-  if (/^\-\-/i.test(cliArgument)) {
+  if (/^--/i.test(cliArgument)) {
     return flags[cliArgument.slice(2)] = true
   }
 })
@@ -55,12 +55,10 @@ if (args[0] === 'compile' || args[0] === 'watch') {
   if (args[0] === 'watch') {
     chokidar
       .watch(absoluteIconsPath, {
-        ignored: /[\/\\]\./,
+        ignored: /[/\\]\./,
         persistent: true,
       })
-      .on('change', iconsPath => {
-        compileIcons(iconsPath)
-      })
+      .on('change', compileIcons)
       .on('error', error => {
         throw error
       })

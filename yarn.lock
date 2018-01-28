@@ -616,9 +616,9 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
-coffee-script@^1.12.4:
-  version "1.12.5"
-  resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.12.5.tgz#809f4585419112bbfe46a073ad7543af18c27346"
+coffeescript@^1.12.4:
+  version "1.12.7"
+  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-1.12.7.tgz#e57ee4c4867cf7f606bfc4a0f2d550c0981ddd27"
 
 colors@~1.1.2:
   version "1.1.2"
@@ -2487,6 +2487,35 @@ rx-lite@^3.1.2:
 safe-buffer@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.0.1.tgz#d263ca54696cd8a306b5ca6551e92de57918fbe7"
+
+sanctuary-def@0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/sanctuary-def/-/sanctuary-def-0.14.0.tgz#cebbec591f5a9b211b34b4b942999d6534010fa8"
+  dependencies:
+    sanctuary-type-classes "7.1.x"
+    sanctuary-type-identifiers "2.0.x"
+
+sanctuary-type-classes@7.1.1, sanctuary-type-classes@7.1.x:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/sanctuary-type-classes/-/sanctuary-type-classes-7.1.1.tgz#084bbd3168d72e60a059f6f78f5b7e391e68ffbb"
+  dependencies:
+    sanctuary-type-identifiers "1.0.x"
+
+sanctuary-type-identifiers@1.0.x:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/sanctuary-type-identifiers/-/sanctuary-type-identifiers-1.0.0.tgz#e8f359f006cb5e624cfb8464603fc114608bde9f"
+
+sanctuary-type-identifiers@2.0.1, sanctuary-type-identifiers@2.0.x:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/sanctuary-type-identifiers/-/sanctuary-type-identifiers-2.0.1.tgz#fc524cf6dd92cebfcbb0dd9509eff193159a20ed"
+
+sanctuary@^0.14.1:
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/sanctuary/-/sanctuary-0.14.1.tgz#3bf7613ec79ad28e5997b2901992e5992d3a047b"
+  dependencies:
+    sanctuary-def "0.14.0"
+    sanctuary-type-classes "7.1.1"
+    sanctuary-type-identifiers "2.0.1"
 
 sax@~1.2.1:
   version "1.2.2"

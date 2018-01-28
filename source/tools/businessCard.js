@@ -1,6 +1,6 @@
 /* eslint-disable id-length */
 
-const rgb = require('./rgba')
+const rgb = require('./rgb')
 const arrangeAsGrid = require('./arrangeAsGrid')
 
 module.exports = (options = {}) => {

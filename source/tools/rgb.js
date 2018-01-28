@@ -11,17 +11,15 @@ const def = $.create({
 module.exports = def(
   'rgb',
   {},
-  [$.ValidNumber, $.ValidNumber, $.ValidNumber, $.ValidNumber, $.String],
-  (red, green, blue, alpha) => {
+  [$.ValidNumber, $.ValidNumber, $.ValidNumber, $.String],
+  (red, green, blue) => {
     const redNew = channelNormalize(red)
     const greenNew = channelNormalize(green)
     const blueNew = channelNormalize(blue)
-    const alphaNew = channelNormalize(alpha)
-    const channelArray = [redNew, greenNew, blueNew, alphaNew]
 
     const value = S.joinWith('', [
-      'rgba(',
-      S.joinWith(',', S.map(S.toString, channelArray)),
+      'rgb(',
+      S.joinWith(',', S.map(S.toString, [redNew, greenNew, blueNew])),
       ')',
     ])
 

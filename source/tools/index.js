@@ -6,6 +6,7 @@ const CleanCSS = require('clean-css')
 const cssobjCore = require('cssobj-core')
 const cssobjPluginGencss = require('cssobj-plugin-gencss')
 
+const rgb = require('./rgb.js')
 const rgba = require('./rgba.js')
 const formatSvg = require('./formatSvg')
 const circleSection = require('./circleSection')
@@ -39,7 +40,7 @@ function cssobjToCss (options = {}) {
   const {
     styleObject,
     minified,
-    scoped,
+    // scoped,
   } = options
   let {
     indentation = '  ',
@@ -80,6 +81,6 @@ module.exports = {
   optimizePathAbsolute,
   optimizePathRelative,
   radToDeg: rad2deg,
-  rgb: rgba,
+  rgb,
   rgba,
 }

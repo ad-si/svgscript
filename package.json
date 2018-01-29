@@ -2,7 +2,7 @@
   "name": "svgscript",
   "version": "0.6.0",
   "description": "Script SVG files",
-  "main": "server.js",
+  "main": "source/server.js",
   "bin": "source/cli.js",
   "scripts": {
     "start": "node server.js",

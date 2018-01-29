@@ -1,4 +1,4 @@
-require('coffee-script/register')
+require('coffeescript/register')
 
 const express = require('express')
 const app = express()

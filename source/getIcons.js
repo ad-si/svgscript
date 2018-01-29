@@ -4,7 +4,7 @@ const path = require('path')
 const createIcon = require('./createIcon')
 
 
-module.exports = (absoluteIconsDirectoryPath) => {
+module.exports = (absoluteIconsDirectoryPath, iconOptions) => {
   const icons = []
   let fileNames
 
@@ -45,7 +45,7 @@ module.exports = (absoluteIconsDirectoryPath) => {
           relativeFilePath: name,
           directoryName: absoluteIconsDirectoryPath,
           absoluteFilePath: path.join(absoluteIconsDirectoryPath, name),
-          content: createIcon(name, iconModule),
+          content: createIcon(name, iconModule, iconOptions),
         })
       }
       catch (error) {

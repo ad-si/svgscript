@@ -42,7 +42,9 @@ module.exports = (printOptions = {}) => {
     cy = undefined,
 
     cutView = false,
-    cutMarksLength = 10,
+    cutMarkLength = 10,
+    cutMarkColor = 'rgb(127, 127, 127)',
+    cutMarkWidth = 0.2,
     firstCutDirection = 'y',
 
     cornerView = false,
@@ -113,26 +115,26 @@ module.exports = (printOptions = {}) => {
           cutMarks.push(orthoLine({
             x: topLeftCornerX,
             y: topLeftCornerY,
-            h: cutMarksLength / 2,
+            h: cutMarkLength / 2,
           }))
           // Right
           cutMarks.push(orthoLine({
             x: topLeftCornerX + totalCellWidth,
             y: topLeftCornerY,
-            h: - cutMarksLength / 2,
+            h: - cutMarkLength / 2,
           }))
           if (isLastRow) {
             // Left
             cutMarks.push(orthoLine({
               x: topLeftCornerX,
               y: topLeftCornerY + totalCellHeight,
-              h: cutMarksLength / 2,
+              h: cutMarkLength / 2,
             }))
             // Right
             cutMarks.push(orthoLine({
               x: topLeftCornerX + totalCellWidth,
               y: topLeftCornerY + totalCellHeight,
-              h: - cutMarksLength / 2,
+              h: - cutMarkLength / 2,
             }))
           }
 
@@ -142,13 +144,13 @@ module.exports = (printOptions = {}) => {
             cutMarks.push(orthoLine({
               x: topLeftCornerX,
               y: topLeftCornerY - play,
-              v: -cutMarksLength / 2,
+              v: -cutMarkLength / 2,
             }))
             if (isLastColumn) {
               cutMarks.push(orthoLine({
                 x: topLeftCornerX + totalCellWidth,
                 y: topLeftCornerY - play,
-                v: - cutMarksLength / 2,
+                v: - cutMarkLength / 2,
               }))
             }
           }
@@ -157,13 +159,13 @@ module.exports = (printOptions = {}) => {
             cutMarks.push(orthoLine({
               x: topLeftCornerX,
               y: topLeftCornerY  + totalCellHeight + play,
-              v: cutMarksLength / 2,
+              v: cutMarkLength / 2,
             }))
             if (isLastColumn) {
               cutMarks.push(orthoLine({
                 x: topLeftCornerX + totalCellWidth,
                 y: topLeftCornerY  + totalCellHeight + play,
-                v: cutMarksLength / 2,
+                v: cutMarkLength / 2,
               }))
             }
           }
@@ -287,8 +289,8 @@ module.exports = (printOptions = {}) => {
       'g.cutMarks',
       {
         style: {
-          stroke: 'rgb(127, 127, 127)',
-          'stroke-width': 0.2,
+          stroke: cutMarkColor,
+          'stroke-width': cutMarkWidth,
         },
       },
       ...cutMarks,

@@ -38,6 +38,7 @@ function getOptions (args) {
   return options
 }
 
+
 function getUsageString (commandName) {
   return `
     Usage: ${commandName} [command] [path-to-file/dir]
@@ -49,7 +50,7 @@ function getUsageString (commandName) {
       compile - Compile file(s) in place to SVG (file.svg.js => file.svg)
       make    - Build SVGs specified in target YAML file
       watch   - Watch target file and compile on change
-      server  - Start server which hosts SVGs in the browser
+      serve   - Start server which hosts SVGs in the browser
 
     Options:
       --options=[YAML] - Icon options to customize SVG output
@@ -61,7 +62,7 @@ function main (cliArgs) {
   const commandName = path.basename(process.argv[1])
   const usageString = getUsageString(commandName)
 
-  if (cliArgs.length < 3) {
+  if (cliArgs.length < 2) {
     console.error(usageString)
     process.exit(1)
   }

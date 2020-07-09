@@ -5,6 +5,7 @@ const tools = require('./tools')
 const coordinateSystemAxes = require('./tools/coordinateSystemAxes')
 const createTransformationString = require('./createTransformationString')
 
+
 module.exports = (name, iconModule, targetData) => {
   let content
 
@@ -34,7 +35,7 @@ module.exports = (name, iconModule, targetData) => {
 
     content = createTransformationString(content)
     content.push(coordinateSystemAxes)
-    content = shaven(content)[0]
+    content = shaven(content).rootElement
   }
   else if (iconModule.svg) {
     content = iconModule.svg(targetData, tools)

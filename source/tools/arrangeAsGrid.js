@@ -177,26 +177,26 @@ module.exports = (printOptions = {}) => {
           cutMarks.push(orthoLine({
             x: topLeftCornerX,
             y: topLeftCornerY,
-            v: cutMarksLength / 2,
+            v: cutMarkLength / 2,
           }))
           // Bottom
           cutMarks.push(orthoLine({
             x: topLeftCornerX,
             y: topLeftCornerY + totalCellHeight,
-            v: - cutMarksLength / 2,
+            v: - cutMarkLength / 2,
           }))
           if (isLastColumn) {
             // Top
             cutMarks.push(orthoLine({
               x: topLeftCornerX + totalCellWidth,
               y: topLeftCornerY,
-              v: cutMarksLength / 2,
+              v: cutMarkLength / 2,
             }))
             // Bottom
             cutMarks.push(orthoLine({
               x: topLeftCornerX + totalCellWidth,
               y: topLeftCornerY + totalCellHeight,
-              v: - cutMarksLength / 2,
+              v: - cutMarkLength / 2,
             }))
           }
 
@@ -206,13 +206,13 @@ module.exports = (printOptions = {}) => {
             cutMarks.push(orthoLine({
               x: topLeftCornerX - play,
               y: topLeftCornerY,
-              h: -cutMarksLength / 2,
+              h: -cutMarkLength / 2,
             }))
             if (isLastRow) {
               cutMarks.push(orthoLine({
                 x: topLeftCornerX - play,
                 y: topLeftCornerY + totalCellHeight,
-                h: - cutMarksLength / 2,
+                h: - cutMarkLength / 2,
               }))
             }
           }
@@ -221,13 +221,13 @@ module.exports = (printOptions = {}) => {
             cutMarks.push(orthoLine({
               x: topLeftCornerX + totalCellWidth + play,
               y: topLeftCornerY,
-              h: cutMarksLength / 2,
+              h: cutMarkLength / 2,
             }))
             if (isLastRow) {
               cutMarks.push(orthoLine({
                 x: topLeftCornerX + totalCellWidth + play,
                 y: topLeftCornerY + totalCellHeight,
-                h: cutMarksLength / 2,
+                h: cutMarkLength / 2,
               }))
             }
           }

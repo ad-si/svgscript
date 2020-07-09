@@ -5,6 +5,7 @@ module.exports.shaven = (config, tools) ->
 
   {width, height} = Object.assign({}, defaults, config)
 
+
   return [
     'svg'
     width: width + 'mm'

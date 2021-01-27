@@ -16,24 +16,38 @@ npm install --global svgscript
 ```txt
 Usage: svgscript [command] [path-to-file/dir]
 
-    [path-to-file/dir] is either a "*.svg.js" file,
-    a "target.yaml" file or a directory.
+[path-to-file/dir] is either a "*.svg.js" file,
+a "targets.yaml" file, or a directory.
 
-    Commands:
-      compile - Compile file(s) in place to SVG (file.svg.js => file.svg)
-      make    - Build SVGs specified in target YAML file
-      watch   - Watch target file and compile on change
-      serve   - Start server which hosts SVGs in the browser
+Commands:
+  compile           -  Compile a SvgScript file and print to stdout
+  compile-in-place  -  Compile file(s) / directory in place
+  make              -  Build SVGs specified in targets YAML file
+  watch             -  Watch a file / directory and compile in place
+  serve             -  Start server which hosts SVGs in the browser
 
-    Options:
-      --options=[YAML] - Icon options to customize SVG output
+Options:
+  --options=[YAML] - Icon options to customize SVG output
 ```
 
-Try it out with e.g.:
+Try it out with following command which compiles all modules in place:
 
 ```sh
 git clone https://github.com/ad-si/svgscript
-svgscript serve svgscript/tests/fixtures
+svgscript compile-in-place svgscript/examples
+```
+
+Or following command which displays them with an interactive SVG viewer:
+
+```sh
+svgscript serve svgscript/examples
+```
+
+
+Or build SVGs as described in a targets YAML file:
+
+```sh
+svgscript make svgscript/examples/targets.yaml
 ```
 
 

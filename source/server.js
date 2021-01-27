@@ -22,12 +22,12 @@ const projectRoot = path.resolve(__dirname, '..')
 
 // function handler (request, response) {
 //   let returnHTML = ''
-//   const iconsDirectory = ''
+//   const iconDirectory = ''
 //
 //   const indexHTML = fs.readFileSync(path.join(projectRoot, 'index.mustache'))
 //   const styles = fs.readFileSync(path.join(projectRoot, 'public/screen.css'))
 //   const content = svgScript
-//     .getIcons(iconsDirectory)
+//     .getIcons(iconDirectory)
 //     .map(icon => {
 //       return '<div class=icon id=' + icon.basename + '>' +
 //         icon.content +
@@ -61,14 +61,21 @@ const projectRoot = path.resolve(__dirname, '..')
 // }
 
 
-export default async (iconsDirectory) => {
-  console.info('Watching', iconsDirectory, 'for changes')
+export default async (paths) => {
+
+  if (paths.length !== 1) {
+    throw new Error('SvgScript currently only accepts 1 file or dir path')
+  }
+
+  const iconDirectory = paths[0]
+
+  console.info(`Watching "${paths}" for changes`)
 
   const port = 7992
   const watcherConfig = {
     ignored: /.+\.(?!m?js)\w+$/gim,
   }
-  const watcher = chokidar.watch(path.resolve(iconsDirectory), watcherConfig)
+  const watcher = chokidar.watch(path.resolve(iconDirectory), watcherConfig)
 
   async function compileIcon (iconPath) {
     const basename = path.basename(iconPath, path.extname(iconPath))
@@ -104,11 +111,11 @@ export default async (iconsDirectory) => {
     Object
       .keys(watched)
       .reduce(
-        (paths, currentDirectory) => {
+        (filesPaths, currentDirectory) => {
           watched[currentDirectory].forEach(fileName => {
-            paths.push(path.join(currentDirectory, fileName))
+            filesPaths.push(path.join(currentDirectory, fileName))
           })
-          return paths
+          return filesPaths
         },
         [],
       )

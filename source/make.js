@@ -11,7 +11,14 @@ import tools from './tools/index.js'
 import createIcon from './createIcon.js'
 
 
-export default async (makeFilePath) => {
+export default async (makeFilePaths) => {
+
+  if (makeFilePaths.length !== 1) {
+    throw new Error('SvgScript currently only accepts 1 file or dir path')
+  }
+
+  const makeFilePath = makeFilePaths[0]
+
   const iconsDirectory = path.dirname(makeFilePath)
   let fileContent
   let deployment
@@ -24,16 +31,22 @@ export default async (makeFilePath) => {
     deployment = yaml.load(fileContent)
   }
   catch (error) {
+    if (error.code === 'EISDIR') {
+      console.error('File must be a valid YAML file')
+      process.exit(1)
+    }
     if (error.code !== 'ENOENT') throw error
   }
 
   console.info('Write Icons:')
 
   deployment.icons.forEach(async icon => {
-    const absoluteIconPath = path.resolve(iconsDirectory, icon.filePath)
-    const iconModule = await import(absoluteIconPath)
-
     if (icon.skip) return
+
+    const absoluteIconPath = path.resolve(iconsDirectory, icon.filePath)
+    const iconModule = await import(
+      absoluteIconPath + `?version=${Math.random()}`
+    )
 
     icon.targets.forEach((targetData, index) => {
       let scale = ''

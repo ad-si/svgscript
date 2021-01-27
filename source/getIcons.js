@@ -4,13 +4,14 @@ import path from 'path'
 import createIcon from './createIcon.js'
 
 
-export default async function (absoluteIconsDirectoryPath, iconOptions) {
+export default async function (absoluteIconsDirectoryPaths, iconOptions) {
   let fileNames
 
-  absoluteIconsDirectoryPath = absoluteIconsDirectoryPath || path.resolve(
-    __dirname,
-    '../test/printerBed.js',
-  )
+  if (absoluteIconsDirectoryPaths.length !== 1) {
+    throw new Error('SvgScript currently only accepts 1 file or dir path')
+  }
+
+  let absoluteIconsDirectoryPath = absoluteIconsDirectoryPaths[0]
 
   const fileStats = await fs.stat(absoluteIconsDirectoryPath)
   const isFile = fileStats.isFile()
@@ -35,7 +36,7 @@ export default async function (absoluteIconsDirectoryPath, iconOptions) {
       name += /.*\.svg$/.test(name) ? '' : '.svg'
 
       try {
-        const iconModule = await import(iconPath)
+        const iconModule = await import(iconPath + `?version=${Math.random()}`)
 
         return {
           relativeFilePath: name,

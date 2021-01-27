@@ -7,7 +7,7 @@ import chokidar from 'chokidar'
 import yaml from 'js-yaml'
 import jsBeautify from 'js-beautify'
 
-const beautifyHtml = jsBeautify.htm
+const beautifyHtml = jsBeautify.html
 
 import * as svgScript from './index.js'
 import svgScriptServer from './server.js'
@@ -47,13 +47,14 @@ function getUsageString (commandName) {
     Usage: ${commandName} [command] [path-to-file/dir]
 
     [path-to-file/dir] is either a "*.svg.js" file,
-    a "target.yaml" file or a directory.
+    a "target.yaml" file, or a directory.
 
     Commands:
-      compile - Compile file(s) in place to SVG (file.svg.js => file.svg)
-      make    - Build SVGs specified in target YAML file
-      watch   - Watch target file and compile on change
-      serve   - Start server which hosts SVGs in the browser
+      compile           -  Compile a SvgScript file and print to stdout
+      compile-in-place  -  Compile file(s) / directory in place
+      make              -  Build SVGs specified in target YAML file
+      watch             -  Watch a file / directory and compile in place
+      serve             -  Start server which hosts SVGs in the browser
 
     Options:
       --options=[YAML] - Icon options to customize SVG output
@@ -71,7 +72,9 @@ async function main (cliArgs) {
   }
 
   const {flags, args} = getOptions(cliArgs)
-  const absoluteIconsPath = path.resolve(process.cwd(), args.pop())
+  const absoluteIconPaths = args
+    .slice(1)
+    .map(arg => path.resolve(process.cwd(), arg))
 
 
   async function saveIcon (icon) {
@@ -98,59 +101,93 @@ async function main (cliArgs) {
   }
 
 
-  async function compileIcons (iconPaths, iconOptions) {
-    const icons = await svgScript
+  async function compileAndWriteIcon (iconPaths, iconOptions) {
+    const graphics = await svgScript
       .getIcons(iconPaths, iconOptions)
 
-    if (icons.length === 1) {
-      console.info(icons[0].content)
+    if (graphics.length === 1) {
+      saveIcon(compileIcon(graphics[0].value))
     }
     else {
-      await Promise.allSettled(
-        icons
-          .map(compileIcon)
-          .map(saveIcon),
+      throw new Error(
+        `${graphics.length} instead of just 1 graphic were passed`,
       )
     }
   }
 
 
-  if (args[0] === 'compile' || args[0] === 'watch') {
-    let iconOptions
+  async function compileAndWriteIcons (iconPaths, iconOptions) {
+    const icons = await svgScript
+      .getIcons(iconPaths, iconOptions)
+
+    await Promise.allSettled(
+      icons
+        .filter(settledProm => settledProm.status === 'fulfilled')
+        .map(icon => icon.value)
+        .map(compileIcon)
+        .map(saveIcon),
+    )
+  }
+
+
+  if (args[0] === 'compile') {
+    let iconOptions = {}
 
     try {
-      iconOptions = yaml.load(flags.options)
+      if (flags.options) {
+        iconOptions = yaml.load(flags.options)
+      }
     }
     catch (error) {
       console.error('Error in: ' + flags.options)
       throw error
     }
 
-    await compileIcons(absoluteIconsPath, iconOptions)
+    const icons = await svgScript.getIcons(absoluteIconPaths, iconOptions)
 
-    if (args[0] === 'watch') {
-      chokidar
-        .watch(absoluteIconsPath, {
-          ignored: /[/\\]\./,
-          persistent: true,
-        })
-        .on('change', compileIcons)
-        .on('error', error => {
-          throw error
-        })
+    console.info(icons[0].value.content)
+  }
+  else if (args[0] === 'compile-in-place') {
+    let iconOptions = {}
+
+    if (flags.options) {
+      iconOptions = yaml.load(flags.options)
     }
+
+    await compileAndWriteIcons(absoluteIconPaths, iconOptions)
+  }
+  else if (args[0] === 'watch') {
+    let iconOptions = {}
+
+    if (flags.options) {
+      iconOptions = yaml.load(flags.options)
+    }
+
+    await compileAndWriteIcons(absoluteIconPaths, iconOptions)
+
+    chokidar
+      .watch(absoluteIconPaths, {
+        ignored: /([/\\]\.|\.svg$)/,
+        persistent: true,
+      })
+      .on('change', async iconPath => {
+        console.info(`Change detected in ${iconPath}`)
+        await compileAndWriteIcon(iconPath, iconOptions)
+      })
+      .on('error', error => {
+        throw error
+      })
   }
   else if (args[0] === 'make') {
-    make(absoluteIconsPath)
+    make(absoluteIconPaths)
   }
   else if (args[0] === 'serve') {
-    svgScriptServer(absoluteIconsPath)
+    svgScriptServer(absoluteIconPaths)
   }
   else {
     console.error(usageString)
     process.exit(1)
   }
 }
-
 
 main(process.argv.slice(2))

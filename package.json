@@ -4,6 +4,7 @@
   "description": "Script SVG files",
   "license": "UNLICENSED",
   "homepage": "https://github.com/ad-si/svgscript",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/ad-si/svgscript"
@@ -11,8 +12,9 @@
   "main": "source/server.js",
   "bin": "source/cli.js",
   "scripts": {
-    "start": "node server.js",
-    "lint": "eslint --max-warnings 0 .",
+    "build": "rollup --config",
+    "start": "node source/server.js",
+    "lint": "eslint --max-warnings=0 --ignore-path=.gitignore .",
     "unit-tests": "node tests/main.js && node tests/tools.js",
     "test": "npm run lint && npm run unit-tests"
   },
@@ -20,6 +22,13 @@
     "svg"
   ],
   "author": "Adrian Sieber <mail@adriansieber.com>",
+  "eslintConfig": {
+    "extends": "eslint-config-javascript",
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    }
+  },
   "dependencies": {
     "browserify": "^17.0.0",
     "browserify-middleware": "^8.1.1",

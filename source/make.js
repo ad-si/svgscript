@@ -1,6 +1,6 @@
 import path from 'path'
 
-import fse from 'fs-extra'
+import fs from 'fs/promises'
 import rimraf from 'rimraf'
 import yaml from 'js-yaml'
 import chalk from 'chalk'
@@ -20,7 +20,7 @@ export default async (makeFilePath) => {
   rimraf.sync(path.join(path.dirname(makeFilePath), 'build'))
 
   try {
-    fileContent = fse.readFileSync(makeFilePath)
+    fileContent = await fs.readFile(makeFilePath)
     deployment = yaml.load(fileContent)
   }
   catch (error) {
@@ -77,7 +77,7 @@ export default async (makeFilePath) => {
       }
 
       svgPromise
-        .then(svg => fse.writeFile(absoluteTargetPath, svg))
+        .then(svg => fs.writeFile(absoluteTargetPath, svg))
         .then(() =>
           console.info(` - ${absoluteTargetPath} ${chalk.green('✔')}`),
         )

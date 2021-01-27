@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-import fse from 'fs-extra'
+import fs from 'fs/promises'
 import path from 'path'
 import chalk from 'chalk'
 import chokidar from 'chokidar'
@@ -74,18 +74,14 @@ async function main (cliArgs) {
   const absoluteIconsPath = path.resolve(process.cwd(), args.pop())
 
 
-  function saveIcon (icon) {
-    fse
-      .writeFile(icon.absoluteFilePath, icon.svg)
-      .then(() => {
-        console.info(chalk.green('Created',
-          path.relative(process.cwd(), icon.absoluteFilePath),
-        ))
-      })
-      .catch(error => {
-        console.error(chalk.red(error.stack))
-        process.exit(1)
-      })
+  async function saveIcon (icon) {
+    await fs.writeFile(icon.absoluteFilePath, icon.svg)
+
+    console.info(
+      chalk.green('Created',
+        path.relative(process.cwd(), icon.absoluteFilePath),
+      ),
+    )
   }
 
 

@@ -1,6 +1,6 @@
-const traverse = require('traverse')
+import traverse from 'traverse'
 
-module.exports = (content) => {
+export default (content) => {
   return traverse(content)
     // Don't use arrow function to have correct scope for this
     .forEach(function (value) {
@@ -25,7 +25,7 @@ module.exports = (content) => {
 
               return `${transformation.type}(${values})`
             })
-            .join(' ')
+            .join(' '),
         )
       }
     })

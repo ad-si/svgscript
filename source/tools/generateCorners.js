@@ -1,6 +1,6 @@
 /* eslint-disable id-length */
 
-module.exports = (options = {}) => {
+export default (options = {}) => {
   const {
     color = 'rgb(127, 127, 127)',
     width = 20,

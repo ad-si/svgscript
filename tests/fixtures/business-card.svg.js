@@ -1,14 +1,10 @@
-module.exports.shaven = (options = {}, tools) => {
-  return tools.businessCard({
+export default function (options, tools) {
+  return tools.shaven(tools.businessCard({
     side: 'back',
     printLayout: true,
     cutView: true,
-    cardGraphic: [
-      'path#card',
-      {
-        // eslint-disable-next-line id-length
-        d: 'M0,0 h5 v7 h3 v6',
-      },
-    ],
-  })
+    name: 'Thomas Smith',
+    job: 'CEO',
+    email: 'thomas@example.org',
+  })).rootElement
 }

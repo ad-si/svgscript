@@ -1,17 +1,17 @@
-const path = require('path')
+import path from 'path'
 
-const fse = require('fs-extra')
-const rimraf = require('rimraf')
-const yaml = require('js-yaml')
-const chalk = require('chalk')
-const Svgo = require('svgo')
+import fse from 'fs-extra'
+import rimraf from 'rimraf'
+import yaml from 'js-yaml'
+import chalk from 'chalk'
+import Svgo from 'svgo'
 const svgo = new Svgo()
 
-const tools = require('./tools')
-const createIcon = require('./createIcon')
+import tools from './tools/index.js'
+import createIcon from './createIcon.js'
 
 
-module.exports = (makeFilePath) => {
+export default async (makeFilePath) => {
   const iconsDirectory = path.dirname(makeFilePath)
   let fileContent
   let deployment
@@ -21,7 +21,7 @@ module.exports = (makeFilePath) => {
 
   try {
     fileContent = fse.readFileSync(makeFilePath)
-    deployment = yaml.safeLoad(fileContent)
+    deployment = yaml.load(fileContent)
   }
   catch (error) {
     if (error.code !== 'ENOENT') throw error
@@ -29,9 +29,9 @@ module.exports = (makeFilePath) => {
 
   console.info('Write Icons:')
 
-  deployment.icons.forEach(icon => {
+  deployment.icons.forEach(async icon => {
     const absoluteIconPath = path.resolve(iconsDirectory, icon.filePath)
-    const iconModule = require(absoluteIconPath)
+    const iconModule = await import(absoluteIconPath)
 
     if (icon.skip) return
 
@@ -39,18 +39,18 @@ module.exports = (makeFilePath) => {
       let scale = ''
       let absoluteTargetPath = absoluteIconPath.replace(
         /(\.svg)?\.js$/i,
-        (index === 0 ? '' : index) + '.svg'
+        (index === 0 ? '' : index) + '.svg',
       )
 
-      if (targetData.hasOwnProperty('fileName')) {
+      if (Object.prototype.hasOwnProperty.call(targetData, 'fileName')) {
         absoluteTargetPath = path.join(
           absoluteTargetPath
             .slice(0, -path.basename(absoluteTargetPath).length),
-          targetData.fileName
+          targetData.fileName,
         )
       }
 
-      if (targetData.hasOwnProperty('filePath')) {
+      if (Object.prototype.hasOwnProperty.call(targetData, 'filePath')) {
         absoluteTargetPath = path.resolve(iconsDirectory, targetData.filePath)
       }
 
@@ -58,7 +58,7 @@ module.exports = (makeFilePath) => {
         scale = '@' + targetData.scale + 'x'
         absoluteTargetPath = absoluteTargetPath.replace(
           /\.svg$/i,
-          scale + '.svg'
+          scale + '.svg',
         )
       }
 
@@ -66,8 +66,8 @@ module.exports = (makeFilePath) => {
         tools.formatSvg(createIcon(
           icon.fileName,
           iconModule,
-          targetData
-        ))
+          targetData,
+        )),
       )
 
       if (targetData.minify) {
@@ -79,7 +79,7 @@ module.exports = (makeFilePath) => {
       svgPromise
         .then(svg => fse.writeFile(absoluteTargetPath, svg))
         .then(() =>
-          console.info(` - ${absoluteTargetPath} ${chalk.green('✔')}`)
+          console.info(` - ${absoluteTargetPath} ${chalk.green('✔')}`),
         )
         .catch(console.error)
     })

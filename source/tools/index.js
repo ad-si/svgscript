@@ -1,17 +1,18 @@
-const clone = require('clone')
-const deg2rad = require('deg2rad')
-const rad2deg = require('rad2deg')
-const SvgPath = require('svgpath')
-const CleanCSS = require('clean-css')
-const cssobjCore = require('cssobj-core')
-const cssobjPluginGencss = require('cssobj-plugin-gencss')
+import clone from 'clone'
+import deg2rad from 'deg2rad'
+import rad2deg from 'rad2deg'
+import SvgPath from 'svgpath'
+import CleanCSS from 'clean-css'
+import cssobjCore from 'cssobj-core'
+import cssobjPluginGencss from 'cssobj-plugin-gencss'
+import shaven from 'shaven'
 
-const rgb = require('./rgb.js')
-const rgba = require('./rgba.js')
-const formatSvg = require('./formatSvg')
-const circleSection = require('./circleSection')
-const arrangeAsGrid = require('./arrangeAsGrid')
-const businessCard = require('./businessCard')
+import rgb from './rgb.js'
+import rgba from './rgba.js'
+import formatSvg from './formatSvg.js'
+import circleSection from './circleSection.js'
+import arrangeAsGrid from './arrangeAsGrid.js'
+import businessCard from './businessCard.js'
 
 
 function optimizePath (path) {
@@ -64,12 +65,12 @@ function cssobjToCss (options = {}) {
 
   return minified
     ? new CleanCSS()
-        .minify(css)
-        .styles
+      .minify(css)
+      .styles
     : css
 }
 
-module.exports = {
+export default {
   arrangeAsGrid,
   businessCard,
   circleSection,
@@ -83,4 +84,5 @@ module.exports = {
   radToDeg: rad2deg,
   rgb,
   rgba,
+  shaven,
 }

@@ -1,15 +1,18 @@
 #! /usr/bin/env node
 
-const fse = require('fs-extra')
-const path = require('path')
-const chalk = require('chalk')
-const chokidar = require('chokidar')
-const yaml = require('js-yaml')
+import fse from 'fs-extra'
+import path from 'path'
+import chalk from 'chalk'
+import chokidar from 'chokidar'
+import yaml from 'js-yaml'
+import jsBeautify from 'js-beautify'
 
-const svgScript = require('./index')
-const svgScriptServer = require('./server')
-const formatSvg = require('./tools/formatSvg')
-const make = require('./make')
+const beautifyHtml = jsBeautify.htm
+
+import * as svgScript from './index.js'
+import svgScriptServer from './server.js'
+import formatSvg from './tools/formatSvg.js'
+import make from './make.js'
 
 
 function getOptions (args) {
@@ -58,7 +61,7 @@ function getUsageString (commandName) {
 }
 
 
-function main (cliArgs) {
+async function main (cliArgs) {
   const commandName = path.basename(process.argv[1])
   const usageString = getUsageString(commandName)
 
@@ -69,7 +72,6 @@ function main (cliArgs) {
 
   const {flags, args} = getOptions(cliArgs)
   const absoluteIconsPath = path.resolve(process.cwd(), args.pop())
-  const beautifyHtml = require('js-beautify').html
 
 
   function saveIcon (icon) {
@@ -77,7 +79,7 @@ function main (cliArgs) {
       .writeFile(icon.absoluteFilePath, icon.svg)
       .then(() => {
         console.info(chalk.green('Created',
-          path.relative(process.cwd(), icon.absoluteFilePath)
+          path.relative(process.cwd(), icon.absoluteFilePath),
         ))
       })
       .catch(error => {
@@ -100,17 +102,19 @@ function main (cliArgs) {
   }
 
 
-  function compileIcons (iconPaths, iconOptions) {
-    const icons = svgScript
+  async function compileIcons (iconPaths, iconOptions) {
+    const icons = await svgScript
       .getIcons(iconPaths, iconOptions)
 
     if (icons.length === 1) {
-      console.info(compileIcon(icons[0]).svg)
+      console.info(icons[0].content)
     }
     else {
-      icons
-        .map(compileIcon)
-        .map(saveIcon)
+      await Promise.allSettled(
+        icons
+          .map(compileIcon)
+          .map(saveIcon),
+      )
     }
   }
 
@@ -119,14 +123,14 @@ function main (cliArgs) {
     let iconOptions
 
     try {
-      iconOptions = yaml.safeLoad(flags.options)
+      iconOptions = yaml.load(flags.options)
     }
     catch (error) {
       console.error('Error in: ' + flags.options)
       throw error
     }
 
-    compileIcons(absoluteIconsPath, iconOptions)
+    await compileIcons(absoluteIconsPath, iconOptions)
 
     if (args[0] === 'watch') {
       chokidar

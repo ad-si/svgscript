@@ -1,4 +1,4 @@
-module.exports = (svgString) => {
+export default (svgString) => {
   const missingNamespaces = []
 
   if (typeof svgString !== 'string') return
@@ -13,7 +13,7 @@ module.exports = (svgString) => {
   }
   if (missingNamespaces !== []) {
     svgString = svgString.replace(
-      '<svg', '<svg ' + missingNamespaces.join(' ')
+      '<svg', '<svg ' + missingNamespaces.join(' '),
     )
   }
   return svgString

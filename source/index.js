@@ -1,5 +1,3 @@
-module.exports = {
-  getIcons: require('./getIcons'),
-  createIcon: require('./createIcon'),
-  make: require('./make'),
-}
+export {default as getIcons} from './getIcons.js'
+export {default as createIcon} from './createIcon.js'
+export {default as make} from './make.js'

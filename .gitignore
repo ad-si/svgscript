@@ -1,3 +1,5 @@
-build
-icons
-cache
+/build
+/cache
+/examples/*.svg
+/icons
+/public/scripts/bundle.js

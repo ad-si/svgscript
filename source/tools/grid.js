@@ -30,7 +30,7 @@ for (let lineIndex = 0; lineIndex < 200; lineIndex++) {
       'xlink:href': '#horizontal',
       x: 0,
       y: -100 + lineIndex,
-    }]
+    }],
   )
   // Vertical line
   lines.push(
@@ -38,10 +38,10 @@ for (let lineIndex = 0; lineIndex < 200; lineIndex++) {
       'xlink:href': '#vertical',
       x: -100 + lineIndex,
       y: 0,
-    }]
+    }],
   )
 }
 
 gridFragment.push(lines)
 
-module.exports = gridFragment
+export default gridFragment

@@ -1,12 +1,12 @@
 /* eslint-disable id-length */
 
-module.exports.shaven = () => {
+export default function (config, tools) {
   const width = 214
   const height = 214
   const screwDiameter = 3
   const renderScrews = false
 
-  return ['svg',
+  return tools.shaven(['svg',
     {
       width: width + 'mm',
       height: height + 'mm',
@@ -82,5 +82,5 @@ module.exports.shaven = () => {
         cy: 211.5,
       }],
     ],
-  ]
+  ]).rootElement
 }

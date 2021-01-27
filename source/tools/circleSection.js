@@ -1,6 +1,6 @@
-const polarToCartesian = require('./polarToCartesian')
+import polarToCartesian from './polarToCartesian.js'
 
-module.exports = (options) => {
+export default (options) => {
   const x = options.x || 0 // eslint-disable-line id-length
   const y = options.y || 0 // eslint-disable-line id-length
   const radius = options.radius || 1

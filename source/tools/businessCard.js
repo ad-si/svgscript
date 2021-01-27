@@ -1,9 +1,10 @@
 /* eslint-disable id-length */
 
-const rgb = require('./rgb')
-const arrangeAsGrid = require('./arrangeAsGrid')
+import rgb from './rgb.js'
+import arrangeAsGrid from './arrangeAsGrid.js'
 
-module.exports = (options = {}) => {
+
+export default (options = {}) => {
   const {
     a4Width = 210,
     a4Height = 297,
@@ -14,6 +15,7 @@ module.exports = (options = {}) => {
     side = 'front', // front or back
     printLayout = false,
     cutView = false,
+    showBackground = false,
     name = 'John Doe',
     job = 'CEO',
     email = 'john@doe.com',
@@ -64,7 +66,7 @@ module.exports = (options = {}) => {
     ],
   } = options
 
-
+  let svgDom = []
   const svgStyle = ['style',
     `text {
       fill: rgb(60, 60, 60);
@@ -73,8 +75,21 @@ module.exports = (options = {}) => {
   ]
 
   if (printLayout) {
-    const showBackground = false
-    const printSvg =  ['svg',
+    const cardGrid = arrangeAsGrid({
+      id: 'printSheet',
+      rows: 5,
+      columns: 2,
+      cx: a4Width / 2,
+      cy: a4Height / 2,
+      cellWidth: cardWidth,
+      cellHeight: cardHeight,
+      backgroundColor: rgb(200, 200, 200),
+      graphic: ['use.card', {'xlink:href': '#card'}],
+      cutView,
+      cornerLength: 2,
+    })
+
+    svgDom = ['svg',
       {
         width: a4Width + unit,
         height: a4Height + unit,
@@ -83,52 +98,40 @@ module.exports = (options = {}) => {
       svgStyle,
       ['defs',
         cardGraphic,
-        arrangeAsGrid({
-          id: 'printSheet',
-          rows: 5,
-          columns: 2,
-          cx: a4Width / 2,
-          cy: a4Height / 2,
-          cellWidth: cardWidth,
-          cellHeight: cardHeight,
-          backgroundColor: rgb(200, 200, 200),
-          graphic: ['use.card', {'xlink:href': '#card'}],
-          cutView,
-          cornerLength: 2,
-        }),
+        cardGrid,
         showBackground
-          ? ['rect#background', {
-            width: a4Width,
-            height: a4Height,
-            stroke: 'gray',
-            'stroke-width': 0.1,
-            style: {
-              fill: rgb(245, 245, 245),
+          ? ['rect#background',
+            {
+              width: a4Width,
+              height: a4Height,
+              stroke: 'gray',
+              'stroke-width': 0.1,
+              style: {
+                fill: rgb(245, 245, 245),
+              },
             },
-          }]
+          ]
           : undefined,
       ],
-
       ['use',
         {'xlink:href': '#background'},
         showBackground,
       ],
       ['use', {'xlink:href': '#printSheet'}],
     ]
-
-    return printSvg
+  }
+  else {
+    svgDom = ['svg',
+      {
+        width: cardWidth + unit,
+        height: cardHeight + unit,
+        viewBox: [0, 0, cardWidth, cardHeight],
+      },
+      svgStyle,
+      ['defs', cardGraphic],
+      ['use', {'xlink:href': '#card'}],
+    ]
   }
 
-  const svg = ['svg',
-    {
-      width: cardWidth + unit,
-      height: cardHeight + unit,
-      viewBox: [0, 0, cardWidth, cardHeight],
-    },
-    svgStyle,
-    ['defs', cardGraphic],
-    ['use', {'xlink:href': '#card'}],
-  ]
-
-  return svg
+  return svgDom
 }

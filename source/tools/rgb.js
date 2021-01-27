@@ -1,28 +1,36 @@
-const S = require('sanctuary') // eslint-disable-line id-length
-const $ = require('sanctuary-def') // eslint-disable-line id-length
-const {channelNormalize} = require('./utils')
+/* eslint-disable no-spaced-func, indent, no-unexpected-multiline */
+
+import S from 'sanctuary'  // eslint-disable-line id-length
+import $ from 'sanctuary-def'  // eslint-disable-line id-length
+import {channelNormalize} from './utils.js'
 
 const def = $.create({
-  checkTypes: process.env.NODE_ENV === 'development',
+  checkTypes: true,
   env: $.env,
 })
 
 
-module.exports = def(
-  'rgb',
-  {},
-  [$.ValidNumber, $.ValidNumber, $.ValidNumber, $.String],
-  (red, green, blue) => {
+const rgbCurried = def('rgb')
+  ({})
+  ([$.ValidNumber, $.ValidNumber, $.ValidNumber, $.String])
+  (red => green => blue => {
     const redNew = channelNormalize(red)
     const greenNew = channelNormalize(green)
     const blueNew = channelNormalize(blue)
 
-    const value = S.joinWith('', [
+    const value = S.joinWith('')([
       'rgb(',
-      S.joinWith(',', S.map(S.toString, [redNew, greenNew, blueNew])),
+      S.joinWith(',')(S.map(S.show)([redNew, greenNew, blueNew])),
       ')',
     ])
 
     return value
+  })
+
+
+export default function (red, green, blue) {
+  if (arguments.length !== 3) {
+    throw new Error(`Expected 3 arguments, not ${arguments.length}`)
   }
-)
+  return rgbCurried(red)(green)(blue)
+}

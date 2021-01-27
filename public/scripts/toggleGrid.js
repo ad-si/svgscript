@@ -1,9 +1,10 @@
-const shaven = require('shaven').default
-const grid = require('../../source/tools/grid')
+import shaven from 'shaven'
+import grid from '../../source/tools/grid.js'
+
 let gridVisibility = false
 
 
-module.exports = () => {
+export default () => {
   const svgs = window.document.querySelectorAll('svg')
 
   if (gridVisibility) {
@@ -22,9 +23,9 @@ module.exports = () => {
         shaven(
           ['svg#definitions',
             ['defs', grid],
-          ]
+          ],
         )
-          .toString()
+          .toString(),
       )
     }
 
@@ -34,9 +35,9 @@ module.exports = () => {
         shaven(
           ['use.grid', {
             'xlink:href': '#grid',
-          }]
+          }],
         )
-          .toString()
+          .toString(),
       )
     }
 

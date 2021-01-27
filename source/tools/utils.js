@@ -1,41 +1,37 @@
-/* eslint-disable new-cap */
+/* eslint-disable new-cap, no-spaced-func, indent, no-unexpected-multiline */
 
-const $ = require('sanctuary-def') // eslint-disable-line id-length
+import $ from 'sanctuary-def'  // eslint-disable-line id-length
 const def = $.create({
-  checkTypes: process.env.NODE_ENV === 'development',
+  checkTypes: true,
   env: $.env,
 })
 
 
-const clampBottom = def(
-  'clampBottom',
-  {},
-  [$.ValidNumber, $.ValidNumber, $.ValidNumber],
-  (bottomValue, value) =>
-    Math.max(value, bottomValue)
-)
+export const clampBottomCurried = def('clampBottom')
+  ({})
+  ([$.ValidNumber, $.ValidNumber, $.ValidNumber])
+  (bottomValue => value =>
+    Math.max(value, bottomValue))
 
-
-const clampTop = def(
-  'clampTop',
-  {},
-  [$.ValidNumber, $.ValidNumber, $.ValidNumber],
-  (topValue, value) =>
-    Math.min(value, topValue)
-)
-
-
-const channelNormalize = def(
-  'channelNormalize',
-  {},
-  [$.ValidNumber, $.ValidNumber],
-  value =>
-    clampTop(255, clampBottom(0, value))
-)
-
-
-module.exports = {
-  clampTop,
-  clampBottom,
-  channelNormalize,
+export function clampBottom (valueA, valueB) {
+  return clampBottomCurried(valueA)(valueB)
 }
+
+
+export const clampTopCurried = def('clampTop')
+  ({})
+  ([$.ValidNumber, $.ValidNumber, $.ValidNumber])
+  (topValue => value =>
+    Math.min(value, topValue))
+
+
+export function clampTop (valueA, valueB) {
+  return clampTopCurried(valueA)(valueB)
+}
+
+
+export const channelNormalize = def('channelNormalize')
+  ({})
+  ([$.ValidNumber, $.ValidNumber])
+  (value =>
+    Math.min(255, Math.max(0, value)))

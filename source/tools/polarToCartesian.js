@@ -1,7 +1,8 @@
 /* eslint-disable id-length */
-const degToRad = require('deg2rad')
 
-module.exports = (centerX, centerY, radius, angleInDegrees) => {
+import degToRad from 'deg2rad'
+
+export default (centerX, centerY, radius, angleInDegrees) => {
   const angleInRadians = degToRad(angleInDegrees)
 
   return {

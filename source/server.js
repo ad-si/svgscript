@@ -1,18 +1,19 @@
+import path from 'path'
+import http from 'http'
 
-const express = require('express')
+import * as socketio from 'socket.io'
+import chokidar from 'chokidar'
+import browserify from 'browserify-middleware'
+import express from 'express'
 const app = express()
-const http = require('http')
-const socketio = require('socket.io')
-// const fs = require('fs')
-const path = require('path')
-const chokidar = require('chokidar')
-const browserify = require('browserify-middleware')
 
-const server = http.Server(app) // eslint-disable-line new-cap
-const socketServer = socketio(server)
+const server = http.Server(app)  // eslint-disable-line new-cap
+const socketServer = new socketio.Server(server)
 
+import * as svgScript from './index.js'
 
-const svgScript = require('./index.js')
+const moduleURL = new URL(import.meta.url)
+const __dirname = path.dirname(moduleURL.pathname)
 const projectRoot = path.resolve(__dirname, '..')
 // const shavenJs = fs.readFileSync(
 //   path.resolve(projectRoot, 'node_modules/shaven/shaven.js')
@@ -60,8 +61,7 @@ const projectRoot = path.resolve(__dirname, '..')
 // }
 
 
-module.exports = (iconsDirectory) => {
-  // eslint-disable-next-line no-console
+export default async (iconsDirectory) => {
   console.info('Watching', iconsDirectory, 'for changes')
 
   const port = 7992
@@ -70,37 +70,32 @@ module.exports = (iconsDirectory) => {
   }
   const watcher = chokidar.watch(path.resolve(iconsDirectory), watcherConfig)
 
-  function compileIcon (iconPath) {
-    delete require.cache[require.resolve(iconPath)]
-
+  async function compileIcon (iconPath) {
     const basename = path.basename(iconPath, path.extname(iconPath))
 
     try {
-      const svgModule = require(iconPath)
+      // Add random version string to force reload of module
+      const svgModule = await import(iconPath + `?version=${Math.random()}`)
       return {
         basename: basename,
         content: svgScript.createIcon(basename, svgModule),
       }
     }
     catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error.stack)
     }
   }
 
-  socketServer.on('connection', socket => {
-    // eslint-disable-next-line no-console
-    console.log('Websocket connection was established')
+  socketServer.on('connection', async socket => {
+    console.info('Websocket connection was established')
 
     watcher
-      .on('change', iconPath => {
+      .on('change', async iconPath => {
         if (iconPath.startsWith('.')) return
-        // eslint-disable-next-line no-console
-        console.log(iconPath, 'changed')
-        socket.emit('icon', compileIcon(iconPath))
+        console.info(iconPath, 'changed')
+        socket.emit('icon', await compileIcon(iconPath))
       })
       .on('error', error => {
-        // eslint-disable-next-line no-console
         console.error(error)
       })
 
@@ -115,7 +110,7 @@ module.exports = (iconsDirectory) => {
           })
           return paths
         },
-        []
+        [],
       )
       .filter(filePath => /\.m?js$/gi.test(filePath))
       .forEach(async filePath =>
@@ -124,14 +119,13 @@ module.exports = (iconsDirectory) => {
   })
 
   app.get('/', (request, response) =>
-    response.sendFile(path.join(projectRoot, 'public/index.html'))
+    response.sendFile(path.join(projectRoot, 'public/index.html')),
   )
 
   app.use('/scripts', browserify(path.join(projectRoot, 'public/scripts')))
   app.use(express.static(path.join(projectRoot, 'public')))
 
   server.listen(port, () =>
-    // eslint-disable-next-line no-console
-    console.log('SvgScript listens on http://localhost:' + port)
+    console.info('SvgScript listens on http://localhost:' + port),
   )
 }

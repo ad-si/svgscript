@@ -1,6 +1,6 @@
-const toggleGrid = require('./toggleGrid')
+import toggleGrid from './toggleGrid.js'
 
-const socket = io() // eslint-disable-line no-undef
+const socket = io()  // eslint-disable-line no-undef
 const iconsContainer = window.document.querySelector('#icons')
 
 

@@ -1,5 +1,7 @@
-const clone = require('clone')
-const generateCorners = require('./generateCorners')
+import clone from 'clone'
+
+import generateCorners from './generateCorners.js'
+
 
 function orthoLine (options = {}) {
   // eslint-disable-next-line id-length
@@ -12,7 +14,7 @@ function orthoLine (options = {}) {
   }]
 }
 
-module.exports = (printOptions = {}) => {
+export default (printOptions = {}) => {
   if (printOptions.cutView) {
     printOptions.gridMargin = 0
     printOptions.cellMargin = 0
@@ -246,8 +248,8 @@ module.exports = (printOptions = {}) => {
       transform: cx || cy
         ? [{
           type: 'translate',
-          x: cx - (totalGridWidth / 2) || 0,
-          y: cy - (totalGridHeight / 2) || 0,
+          x: (cx - (totalGridWidth / 2)) || 0,
+          y: (cy - (totalGridHeight / 2)) || 0,
         }]
         : false,
     },

@@ -1,10 +1,11 @@
-const assert = require('assert')
-const commonTags = require('common-tags')
+import assert from 'assert'
+import commonTags from 'common-tags'
+
 const oneLine = commonTags.oneLine
 
-const createIcon = require('../source/createIcon')
-const basicIcon = require('./fixtures/basic.svg.js')
-const businessCard = require('./fixtures/business-card.svg.js')
+import createIcon from '../source/createIcon.js'
+import basicIcon from './fixtures/basic.svg.js'
+import businessCard from './fixtures/business-card.svg.js'
 
 const expectedSvg = oneLine `<svg width="214mm" height="214mm"
   viewBox="0,0,214,214"><path d="M7,0h200a 7 7 0 0 0 7 7v200a 7 7 0 0 0 -7
@@ -14,7 +15,7 @@ const actualSvg = createIcon('test', basicIcon)
 
 assert.equal(
   actualSvg,
-  expectedSvg
+  expectedSvg,
 )
 
 assert(createIcon('businessCard', businessCard))

@@ -1,0 +1,18 @@
+icons:
+  -
+    filePath: skeleton.svg.js
+    targets:
+      - {}
+
+  -
+    filePath: laptop-stand.svg.js
+    targets:
+      - color: green
+      - color: red
+      - color: blue
+
+  -
+    filePath: non-existant.svg.js
+    skip: true
+    targets:
+      - {}

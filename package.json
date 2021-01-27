@@ -1,6 +1,6 @@
 {
   "name": "svgscript",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Script SVG files",
   "license": "UNLICENSED",
   "homepage": "https://github.com/ad-si/svgscript",
@@ -10,7 +10,9 @@
     "url": "https://github.com/ad-si/svgscript"
   },
   "main": "source/server.js",
-  "bin": "source/cli.js",
+  "bin": {
+    "svgscript": "source/cli.js"
+  },
   "scripts": {
     "build": "rollup --config",
     "start": "node source/server.js",

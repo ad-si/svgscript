@@ -1,4 +1,3 @@
-require('coffeescript/register')
 
 const express = require('express')
 const app = express()
@@ -67,7 +66,7 @@ module.exports = (iconsDirectory) => {
 
   const port = 7992
   const watcherConfig = {
-    ignored: /.+\.(?!js|coffee)\w+$/gim,
+    ignored: /.+\.(?!m?js)\w+$/gim,
   }
   const watcher = chokidar.watch(path.resolve(iconsDirectory), watcherConfig)
 
@@ -118,9 +117,9 @@ module.exports = (iconsDirectory) => {
         },
         []
       )
-      .filter(filePath => /\.(js|coffee)$/gi.test(filePath))
-      .forEach(filePath =>
-        socket.emit('icon', compileIcon(filePath))
+      .filter(filePath => /\.m?js$/gi.test(filePath))
+      .forEach(async filePath =>
+        socket.emit('icon', await compileIcon(filePath)),
       )
   })
 

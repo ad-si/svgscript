@@ -1,4 +1,4 @@
-import polarToCartesian from './polarToCartesian.js'
+import polarToCartesian from "./polarToCartesian.js"
 
 export default (options) => {
   const x = options.x || 0 // eslint-disable-line id-length
@@ -14,7 +14,7 @@ export default (options) => {
   const pathString = `M${start.x},${start.y}` +
     `A${radius},${radius} 0 ${largeArc} 1 ${end.x},${end.y}` +
     `L${x},${y}` +
-    'z'
+    "z"
 
   return pathString
 }

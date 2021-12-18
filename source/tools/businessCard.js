@@ -1,7 +1,7 @@
 /* eslint-disable id-length */
 
-import rgb from './rgb.js'
-import arrangeAsGrid from './arrangeAsGrid.js'
+import rgb from "./rgb.js"
+import arrangeAsGrid from "./arrangeAsGrid.js"
 
 
 export default (options = {}) => {
@@ -10,23 +10,23 @@ export default (options = {}) => {
     a4Height = 297,
     cardWidth = 85,
     cardHeight = 55,
-    unit = 'mm',
+    unit = "mm",
     fontSize = 4,
-    side = 'front', // front or back
+    side = "front", // front or back
     printLayout = false,
     cutView = false,
     showBackground = false,
-    name = 'John Doe',
-    job = 'CEO',
-    email = 'john@doe.com',
-    cardGraphic = ['g#card',
+    name = "John Doe",
+    job = "CEO",
+    email = "john@doe.com",
+    cardGraphic = ["g#card",
       {
         style: {
-          'text-anchor': 'middle',
-          'font-size': `${fontSize}px`,
+          "text-anchor": "middle",
+          "font-size": `${fontSize}px`,
         },
       },
-      ['rect.background', {
+      ["rect.background", {
         width: cardWidth,
         height: cardHeight,
         style: {
@@ -34,40 +34,40 @@ export default (options = {}) => {
         },
       }],
 
-      ['text.name', name, {
+      ["text.name", name, {
         x: cardWidth / 2,
         y: (cardHeight / 2) - (fontSize * 2.2),
         style: {
-          'font-size': `${fontSize * 1.5}px`,
-          'font-weight': 900,
+          "font-size": `${fontSize * 1.5}px`,
+          "font-weight": 900,
         },
       }],
-      ['text.job', job,
+      ["text.job", job,
         {
           x: cardWidth / 2,
           y: (cardHeight / 2) - (fontSize * 0.4),
           style: {
-            fill: 'rgb(100, 100, 100)',
-            'font-size': `${fontSize * 1.2}px`,
+            fill: "rgb(100, 100, 100)",
+            "font-size": `${fontSize * 1.2}px`,
           },
         },
-        side === 'back',
+        side === "back",
       ],
-      ['text.email', email,
+      ["text.email", email,
         {
           x: cardWidth / 2,
           y: cardHeight / 2 + (fontSize * 2.2),
           style: {
-            fill: 'rgb(100, 100, 100)',
+            fill: "rgb(100, 100, 100)",
           },
         },
-        side === 'back',
+        side === "back",
       ],
     ],
   } = options
 
   let svgDom = []
-  const svgStyle = ['style',
+  const svgStyle = ["style",
     `text {
       fill: rgb(60, 60, 60);
       font-family: Helvetica, sans-serif;
@@ -76,7 +76,7 @@ export default (options = {}) => {
 
   if (printLayout) {
     const cardGrid = arrangeAsGrid({
-      id: 'printSheet',
+      id: "printSheet",
       rows: 5,
       columns: 2,
       cx: a4Width / 2,
@@ -84,28 +84,28 @@ export default (options = {}) => {
       cellWidth: cardWidth,
       cellHeight: cardHeight,
       backgroundColor: rgb(200, 200, 200),
-      graphic: ['use.card', {'xlink:href': '#card'}],
+      graphic: ["use.card", {"xlink:href": "#card"}],
       cutView,
       cornerLength: 2,
     })
 
-    svgDom = ['svg',
+    svgDom = ["svg",
       {
         width: a4Width + unit,
         height: a4Height + unit,
         viewBox: [0, 0, a4Width, a4Height],
       },
       svgStyle,
-      ['defs',
+      ["defs",
         cardGraphic,
         cardGrid,
         showBackground
-          ? ['rect#background',
+          ? ["rect#background",
             {
               width: a4Width,
               height: a4Height,
-              stroke: 'gray',
-              'stroke-width': 0.1,
+              stroke: "gray",
+              "stroke-width": 0.1,
               style: {
                 fill: rgb(245, 245, 245),
               },
@@ -113,23 +113,23 @@ export default (options = {}) => {
           ]
           : undefined,
       ],
-      ['use',
-        {'xlink:href': '#background'},
+      ["use",
+        {"xlink:href": "#background"},
         showBackground,
       ],
-      ['use', {'xlink:href': '#printSheet'}],
+      ["use", {"xlink:href": "#printSheet"}],
     ]
   }
   else {
-    svgDom = ['svg',
+    svgDom = ["svg",
       {
         width: cardWidth + unit,
         height: cardHeight + unit,
         viewBox: [0, 0, cardWidth, cardHeight],
       },
       svgStyle,
-      ['defs', cardGraphic],
-      ['use', {'xlink:href': '#card'}],
+      ["defs", cardGraphic],
+      ["use", {"xlink:href": "#card"}],
     ]
   }
 

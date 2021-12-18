@@ -1,20 +1,20 @@
-import path from 'path'
+import path from "path"
 
-import fs from 'fs/promises'
-import rimraf from 'rimraf'
-import yaml from 'js-yaml'
-import chalk from 'chalk'
-import Svgo from 'svgo'
+import fs from "fs/promises"
+import rimraf from "rimraf"
+import yaml from "js-yaml"
+import chalk from "chalk"
+import Svgo from "svgo"
 const svgo = new Svgo()
 
-import tools from './tools/index.js'
-import createIcon from './createIcon.js'
+import tools from "./tools/index.js"
+import createIcon from "./createIcon.js"
 
 
 export default async (makeFilePaths) => {
 
   if (makeFilePaths.length !== 1) {
-    throw new Error('SvgScript currently only accepts 1 file or dir path')
+    throw new Error("SvgScript currently only accepts 1 file or dir path")
   }
 
   const makeFilePath = makeFilePaths[0]
@@ -24,21 +24,21 @@ export default async (makeFilePaths) => {
   let deployment
 
   // Remove build folder
-  rimraf.sync(path.join(path.dirname(makeFilePath), 'build'))
+  rimraf.sync(path.join(path.dirname(makeFilePath), "build"))
 
   try {
     fileContent = await fs.readFile(makeFilePath)
     deployment = yaml.load(fileContent)
   }
   catch (error) {
-    if (error.code === 'EISDIR') {
-      console.error('File must be a valid YAML file')
+    if (error.code === "EISDIR") {
+      console.error("File must be a valid YAML file")
       process.exit(1)
     }
-    if (error.code !== 'ENOENT') throw error
+    if (error.code !== "ENOENT") throw error
   }
 
-  console.info('Write Icons:')
+  console.info("Write Icons:")
 
   deployment.icons.forEach(async icon => {
     if (icon.skip) return
@@ -49,13 +49,13 @@ export default async (makeFilePaths) => {
     )
 
     icon.targets.forEach((targetData, index) => {
-      let scale = ''
+      let scale = ""
       let absoluteTargetPath = absoluteIconPath.replace(
         /(\.svg)?\.js$/i,
-        (index === 0 ? '' : index) + '.svg',
+        (index === 0 ? "" : index) + ".svg",
       )
 
-      if (Object.prototype.hasOwnProperty.call(targetData, 'fileName')) {
+      if (Object.prototype.hasOwnProperty.call(targetData, "fileName")) {
         absoluteTargetPath = path.join(
           absoluteTargetPath
             .slice(0, -path.basename(absoluteTargetPath).length),
@@ -63,15 +63,15 @@ export default async (makeFilePaths) => {
         )
       }
 
-      if (Object.prototype.hasOwnProperty.call(targetData, 'filePath')) {
+      if (Object.prototype.hasOwnProperty.call(targetData, "filePath")) {
         absoluteTargetPath = path.resolve(iconsDirectory, targetData.filePath)
       }
 
       if (targetData.scale > 0) {
-        scale = '@' + targetData.scale + 'x'
+        scale = "@" + targetData.scale + "x"
         absoluteTargetPath = absoluteTargetPath.replace(
           /\.svg$/i,
-          scale + '.svg',
+          scale + ".svg",
         )
       }
 
@@ -92,7 +92,7 @@ export default async (makeFilePaths) => {
       svgPromise
         .then(svg => fs.writeFile(absoluteTargetPath, svg))
         .then(() =>
-          console.info(` - ${absoluteTargetPath} ${chalk.green('✔')}`),
+          console.info(` - ${absoluteTargetPath} ${chalk.green("✔")}`),
         )
         .catch(console.error)
     })

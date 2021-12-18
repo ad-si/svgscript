@@ -1,18 +1,18 @@
 #! /usr/bin/env node
 
-import fs from 'fs/promises'
-import path from 'path'
-import chalk from 'chalk'
-import chokidar from 'chokidar'
-import yaml from 'js-yaml'
-import jsBeautify from 'js-beautify'
+import fs from "fs/promises"
+import path from "path"
+import chalk from "chalk"
+import chokidar from "chokidar"
+import yaml from "js-yaml"
+import jsBeautify from "js-beautify"
 
 const beautifyHtml = jsBeautify.html
 
-import * as svgScript from './index.js'
-import svgScriptServer from './server.js'
-import formatSvg from './tools/formatSvg.js'
-import make from './make.js'
+import * as svgScript from "./index.js"
+import svgScriptServer from "./server.js"
+import formatSvg from "./tools/formatSvg.js"
+import make from "./make.js"
 
 
 function getOptions (args) {
@@ -26,7 +26,7 @@ function getOptions (args) {
       const stripped = cliArg.slice(2)
 
       if (/^[a-z]+=.+/i.test(stripped)) {
-        const split = stripped.split('=')
+        const split = stripped.split("=")
         options.flags[split[0]] = split[1]
       }
       else {
@@ -81,7 +81,7 @@ async function main (cliArgs) {
     await fs.writeFile(icon.absoluteFilePath, icon.svg)
 
     console.info(
-      chalk.green('Created',
+      chalk.green("Created",
         path.relative(process.cwd(), icon.absoluteFilePath),
       ),
     )
@@ -95,7 +95,7 @@ async function main (cliArgs) {
       ? formatSvg(icon.content)
       : beautifyHtml(formatSvg(icon.content))
 
-    if (!/\n$/.test(icon.svg)) icon.svg += '\n'
+    if (!/\n$/.test(icon.svg)) icon.svg += "\n"
 
     return icon
   }
@@ -122,7 +122,7 @@ async function main (cliArgs) {
 
     await Promise.allSettled(
       icons
-        .filter(settledProm => settledProm.status === 'fulfilled')
+        .filter(settledProm => settledProm.status === "fulfilled")
         .map(icon => icon.value)
         .map(compileIcon)
         .map(saveIcon),
@@ -130,7 +130,7 @@ async function main (cliArgs) {
   }
 
 
-  if (args[0] === 'compile') {
+  if (args[0] === "compile") {
     let iconOptions = {}
 
     try {
@@ -139,7 +139,7 @@ async function main (cliArgs) {
       }
     }
     catch (error) {
-      console.error('Error in: ' + flags.options)
+      console.error("Error in: " + flags.options)
       throw error
     }
 
@@ -147,7 +147,7 @@ async function main (cliArgs) {
 
     console.info(icons[0].value.content)
   }
-  else if (args[0] === 'compile-in-place') {
+  else if (args[0] === "compile-in-place") {
     let iconOptions = {}
 
     if (flags.options) {
@@ -156,7 +156,7 @@ async function main (cliArgs) {
 
     await compileAndWriteIcons(absoluteIconPaths, iconOptions)
   }
-  else if (args[0] === 'watch') {
+  else if (args[0] === "watch") {
     let iconOptions = {}
 
     if (flags.options) {
@@ -170,18 +170,18 @@ async function main (cliArgs) {
         ignored: /([/\\]\.|\.svg$)/,
         persistent: true,
       })
-      .on('change', async iconPath => {
+      .on("change", async iconPath => {
         console.info(`Change detected in ${iconPath}`)
         await compileAndWriteIcon(iconPath, iconOptions)
       })
-      .on('error', error => {
+      .on("error", error => {
         throw error
       })
   }
-  else if (args[0] === 'make') {
+  else if (args[0] === "make") {
     make(absoluteIconPaths)
   }
-  else if (args[0] === 'serve') {
+  else if (args[0] === "serve") {
     svgScriptServer(absoluteIconPaths)
   }
   else {

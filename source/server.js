@@ -1,20 +1,20 @@
-import path from 'path'
-import http from 'http'
+import path from "path"
+import http from "http"
 
-import * as socketio from 'socket.io'
-import chokidar from 'chokidar'
-import browserify from 'browserify-middleware'
-import express from 'express'
+import * as socketio from "socket.io"
+import chokidar from "chokidar"
+import browserify from "browserify-middleware"
+import express from "express"
 const app = express()
 
 const server = http.Server(app)  // eslint-disable-line new-cap
 const socketServer = new socketio.Server(server)
 
-import * as svgScript from './index.js'
+import * as svgScript from "./index.js"
 
 const moduleURL = new URL(import.meta.url)
 const __dirname = path.dirname(moduleURL.pathname)
-const projectRoot = path.resolve(__dirname, '..')
+const projectRoot = path.resolve(__dirname, "..")
 // const shavenJs = fs.readFileSync(
 //   path.resolve(projectRoot, 'node_modules/shaven/shaven.js')
 // )
@@ -64,7 +64,7 @@ const projectRoot = path.resolve(__dirname, '..')
 export default async (paths) => {
 
   if (paths.length !== 1) {
-    throw new Error('SvgScript currently only accepts 1 file or dir path')
+    throw new Error("SvgScript currently only accepts 1 file or dir path")
   }
 
   const iconDirectory = paths[0]
@@ -93,16 +93,16 @@ export default async (paths) => {
     }
   }
 
-  socketServer.on('connection', async socket => {
-    console.info('Websocket connection was established')
+  socketServer.on("connection", async socket => {
+    console.info("Websocket connection was established")
 
     watcher
-      .on('change', async iconPath => {
-        if (iconPath.startsWith('.')) return
-        console.info(iconPath, 'changed')
-        socket.emit('icon', await compileIcon(iconPath))
+      .on("change", async iconPath => {
+        if (iconPath.startsWith(".")) return
+        console.info(iconPath, "changed")
+        socket.emit("icon", await compileIcon(iconPath))
       })
-      .on('error', error => {
+      .on("error", error => {
         console.error(error)
       })
 
@@ -121,18 +121,18 @@ export default async (paths) => {
       )
       .filter(filePath => /\.m?js$/gi.test(filePath))
       .forEach(async filePath =>
-        socket.emit('icon', await compileIcon(filePath)),
+        socket.emit("icon", await compileIcon(filePath)),
       )
   })
 
-  app.get('/', (request, response) =>
-    response.sendFile(path.join(projectRoot, 'public/index.html')),
+  app.get("/", (request, response) =>
+    response.sendFile(path.join(projectRoot, "public/index.html")),
   )
 
-  app.use('/scripts', browserify(path.join(projectRoot, 'public/scripts')))
-  app.use(express.static(path.join(projectRoot, 'public')))
+  app.use("/scripts", browserify(path.join(projectRoot, "public/scripts")))
+  app.use(express.static(path.join(projectRoot, "public")))
 
   server.listen(port, () =>
-    console.info('SvgScript listens on http://localhost:' + port),
+    console.info("SvgScript listens on http://localhost:" + port),
   )
 }

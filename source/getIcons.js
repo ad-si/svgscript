@@ -1,14 +1,14 @@
-import fs from 'fs/promises'
-import path from 'path'
+import fs from "fs/promises"
+import path from "path"
 
-import createIcon from './createIcon.js'
+import createIcon from "./createIcon.js"
 
 
 export default async function (absoluteIconsDirectoryPaths, iconOptions) {
   let fileNames
 
   if (absoluteIconsDirectoryPaths.length !== 1) {
-    throw new Error('SvgScript currently only accepts 1 file or dir path')
+    throw new Error("SvgScript currently only accepts 1 file or dir path")
   }
 
   let absoluteIconsDirectoryPath = absoluteIconsDirectoryPaths[0]
@@ -33,7 +33,7 @@ export default async function (absoluteIconsDirectoryPaths, iconOptions) {
         path.extname(iconPath),
       )
 
-      name += /.*\.svg$/.test(name) ? '' : '.svg'
+      name += /.*\.svg$/.test(name) ? "" : ".svg"
 
       try {
         const iconModule = await import(iconPath + `?version=${Math.random()}`)

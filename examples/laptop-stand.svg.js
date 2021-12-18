@@ -2,27 +2,27 @@ export default function (conf = {}, tools) {
 
   // Units in mm
 
-  const currentView = 'side'
+  const currentView = "side"
 
   const defaults = {
     width: 50,
     height: 60,
-    backgroundColor: 'hsl(0,0%,90%)',
-    color: 'burlywood',
-    strokeColor: 'rgb(0, 0, 0)',
+    backgroundColor: "hsl(0,0%,90%)",
+    color: "burlywood",
+    strokeColor: "rgb(0, 0, 0)",
     strokeWidth: 0.1,
     cardboardThickness: 4,
 
-    crossbarsTransform: 'translate(10,10)',
+    crossbarsTransform: "translate(10,10)",
     showCrossBars1: true,
 
     showCrossBars2: false,
-    crossbars2Transform: 'translate(0,90)',
+    crossbars2Transform: "translate(0,90)",
 
-    sideWallsTransform: 'translate(10,10)',
+    sideWallsTransform: "translate(10,10)",
 
     showSideWall1: true,
-    sideWall1Transform: 'translate(20,10)',
+    sideWall1Transform: "translate(20,10)",
 
     showSideWall2: false,
 
@@ -61,10 +61,10 @@ export default function (conf = {}, tools) {
   conf = Object.assign(defaults, views[currentView], conf)
 
 
-  const svgDom = ['svg',
+  const svgDom = ["svg",
     {
-      width: (conf.width * conf.scale) + 'mm',
-      height: (conf.height * conf.scale) + 'mm',
+      width: (conf.width * conf.scale) + "mm",
+      height: (conf.height * conf.scale) + "mm",
       viewBox: [
         0,
         0,
@@ -72,7 +72,7 @@ export default function (conf = {}, tools) {
         conf.height,
       ].join(),
     },
-    ['rect',
+    ["rect",
       {
         style: {
           fill: conf.color,

@@ -1,8 +1,8 @@
 /* eslint-disable no-spaced-func, indent, no-unexpected-multiline */
 
-import S from 'sanctuary'  // eslint-disable-line id-length
-import $ from 'sanctuary-def'  // eslint-disable-line id-length
-import {channelNormalize} from './utils.js'
+import S from "sanctuary"  // eslint-disable-line id-length
+import $ from "sanctuary-def"  // eslint-disable-line id-length
+import {channelNormalize} from "./utils.js"
 
 const def = $.create({
   checkTypes: true,
@@ -10,7 +10,7 @@ const def = $.create({
 })
 
 
-const rgbCurried = def('rgb')
+const rgbCurried = def("rgb")
   ({})
   ([$.ValidNumber, $.ValidNumber, $.ValidNumber, $.String])
   (red => green => blue => {
@@ -18,10 +18,10 @@ const rgbCurried = def('rgb')
     const greenNew = channelNormalize(green)
     const blueNew = channelNormalize(blue)
 
-    const value = S.joinWith('')([
-      'rgb(',
-      S.joinWith(',')(S.map(S.show)([redNew, greenNew, blueNew])),
-      ')',
+    const value = S.joinWith("")([
+      "rgb(",
+      S.joinWith(",")(S.map(S.show)([redNew, greenNew, blueNew])),
+      ")",
     ])
 
     return value

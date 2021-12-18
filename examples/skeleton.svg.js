@@ -6,10 +6,10 @@ export default function (config = {}, tools) {
     height = 100,
   } = config
 
-  return tools.shaven(['svg',
+  return tools.shaven(["svg",
     {
-      width: width + 'mm',
-      height: height + 'mm',
+      width: width + "mm",
+      height: height + "mm",
       viewBox: [
         0,
         0,
@@ -17,8 +17,8 @@ export default function (config = {}, tools) {
         height,
       ],
     },
-    ['g',
-      ['circle',
+    ["g",
+      ["circle",
         {
           r: 10,
           cx: 50,

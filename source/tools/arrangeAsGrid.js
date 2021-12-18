@@ -1,12 +1,12 @@
-import clone from 'clone'
+import clone from "clone"
 
-import generateCorners from './generateCorners.js'
+import generateCorners from "./generateCorners.js"
 
 
 function orthoLine (options = {}) {
   // eslint-disable-next-line id-length
   const {x = 0, y = 0, h = 0, v = 0} = options
-  return ['line', {
+  return ["line", {
     x1: x,
     y1: y,
     x2: x + h,
@@ -38,16 +38,16 @@ export default (printOptions = {}) => {
 
     columns = 4,
     rows = 4,
-    graphic = ['text', 'Graphic is missing'],
-    id = 'grid',
+    graphic = ["text", "Graphic is missing"],
+    id = "grid",
     cx = undefined,
     cy = undefined,
 
     cutView = false,
     cutMarkLength = 10,
-    cutMarkColor = 'rgb(127, 127, 127)',
+    cutMarkColor = "rgb(127, 127, 127)",
     cutMarkWidth = 0.2,
-    firstCutDirection = 'y',
+    firstCutDirection = "y",
 
     cornerView = false,
     innerCorners = true,
@@ -78,10 +78,10 @@ export default (printOptions = {}) => {
       const isFirstRow = row === 0
       const isFirstColumn = column === 0
 
-      const gridCell = ['g',
+      const gridCell = ["g",
         {
           transform: [{
-            type: 'translate',
+            type: "translate",
             x: topLeftCornerX,
             y: topLeftCornerY,
           }],
@@ -111,7 +111,7 @@ export default (printOptions = {}) => {
 
       if (cutView) {
         const play = 1
-        if (firstCutDirection === 'y') {
+        if (firstCutDirection === "y") {
           // Horizontal marks
           // Left
           cutMarks.push(orthoLine({
@@ -173,7 +173,7 @@ export default (printOptions = {}) => {
           }
         }
 
-        if (firstCutDirection === 'x') {
+        if (firstCutDirection === "x") {
           // Veritcal Marks
           // Top
           cutMarks.push(orthoLine({
@@ -242,12 +242,12 @@ export default (printOptions = {}) => {
     }
   }
 
-  const grid = ['g.grid',
+  const grid = ["g.grid",
     {
       id,
       transform: cx || cy
         ? [{
-          type: 'translate',
+          type: "translate",
           x: (cx - (totalGridWidth / 2)) || 0,
           y: (cy - (totalGridHeight / 2)) || 0,
         }]
@@ -264,7 +264,7 @@ export default (printOptions = {}) => {
       totalCellHeight !== cellHeight
     )
   ) {
-    const background = ['rect.background',
+    const background = ["rect.background",
       {
         width: totalGridWidth,
         height: totalGridHeight,
@@ -274,10 +274,10 @@ export default (printOptions = {}) => {
     grid.push(background)
   }
 
-  const cells = ['g.cells',
+  const cells = ["g.cells",
     {
       transform: [{
-        type: 'translate',
+        type: "translate",
         x: gridMarginLeft,
         y: gridMarginTop,
       }],
@@ -288,11 +288,11 @@ export default (printOptions = {}) => {
 
   if (cutView) {
     const cutMarksGroup = [
-      'g.cutMarks',
+      "g.cutMarks",
       {
         style: {
           stroke: cutMarkColor,
-          'stroke-width': cutMarkWidth,
+          "stroke-width": cutMarkWidth,
         },
       },
       ...cutMarks,

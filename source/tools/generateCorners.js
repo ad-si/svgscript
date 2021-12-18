@@ -2,7 +2,7 @@
 
 export default (options = {}) => {
   const {
-    color = 'rgb(127, 127, 127)',
+    color = "rgb(127, 127, 127)",
     width = 20,
     height = 20,
     cornerLength = 10,
@@ -15,13 +15,13 @@ export default (options = {}) => {
     viewSwitches = [true, true, true, true],
   } = options
 
-  return ['g.corners',
+  return ["g.corners",
     {
       style: {
         fill: color,
       },
     },
-    ['rect.corner.top-left',
+    ["rect.corner.top-left",
       {
         width: cornerLength,
         height: cornerLength,
@@ -30,7 +30,7 @@ export default (options = {}) => {
       },
       viewSwitches[0],
     ],
-    ['rect.corner.top-right',
+    ["rect.corner.top-right",
       {
         width: cornerLength,
         height: cornerLength,
@@ -39,7 +39,7 @@ export default (options = {}) => {
       },
       viewSwitches[1],
     ],
-    ['rect.corner.bottom-right',
+    ["rect.corner.bottom-right",
       {
         width: cornerLength,
         height: cornerLength,
@@ -48,7 +48,7 @@ export default (options = {}) => {
       },
       viewSwitches[2],
     ],
-    ['rect.corner.bottom-left',
+    ["rect.corner.bottom-left",
       {
         width: cornerLength,
         height: cornerLength,

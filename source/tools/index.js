@@ -1,18 +1,18 @@
-import clone from 'clone'
-import deg2rad from 'deg2rad'
-import rad2deg from 'rad2deg'
-import SvgPath from 'svgpath'
-import CleanCSS from 'clean-css'
-import cssobjCore from 'cssobj-core'
-import cssobjPluginGencss from 'cssobj-plugin-gencss'
-import shaven from 'shaven'
+import clone from "clone"
+import deg2rad from "deg2rad"
+import rad2deg from "rad2deg"
+import SvgPath from "svgpath"
+import CleanCSS from "clean-css"
+import cssobjCore from "cssobj-core"
+import cssobjPluginGencss from "cssobj-plugin-gencss"
+import shaven from "shaven"
 
-import rgb from './rgb.js'
-import rgba from './rgba.js'
-import formatSvg from './formatSvg.js'
-import circleSection from './circleSection.js'
-import arrangeAsGrid from './arrangeAsGrid.js'
-import businessCard from './businessCard.js'
+import rgb from "./rgb.js"
+import rgba from "./rgba.js"
+import formatSvg from "./formatSvg.js"
+import circleSection from "./circleSection.js"
+import arrangeAsGrid from "./arrangeAsGrid.js"
+import businessCard from "./businessCard.js"
 
 
 function optimizePath (path) {
@@ -44,13 +44,13 @@ function cssobjToCss (options = {}) {
     // scoped,
   } = options
   let {
-    indentation = '  ',
-    endOfLine = '\n',
+    indentation = "  ",
+    endOfLine = "\n",
   } = options
 
   if (minified) {
-    indentation = ''
-    endOfLine = ''
+    indentation = ""
+    endOfLine = ""
   }
 
   const getInstance = cssobjCore({

@@ -1,20 +1,20 @@
-import toggleGrid from './toggleGrid.js'
+import toggleGrid from "./toggleGrid.js"
 
 const socket = io()  // eslint-disable-line no-undef
-const iconsContainer = window.document.querySelector('#icons')
+const iconsContainer = window.document.querySelector("#icons")
 
 
 document
-  .querySelector('#toggleGrid')
-  .addEventListener('click', () => toggleGrid())
+  .querySelector("#toggleGrid")
+  .addEventListener("click", () => toggleGrid())
 
-socket.on('icon', (data) => {
-  let iconContainer = window.document.querySelector('#' + data.basename)
+socket.on("icon", (data) => {
+  let iconContainer = window.document.querySelector("#" + data.basename)
 
   if (!iconContainer) {
-    iconContainer = window.document.createElement('div')
+    iconContainer = window.document.createElement("div")
     iconContainer.id = data.basename
-    iconContainer.classList.add('icon')
+    iconContainer.classList.add("icon")
     iconsContainer.appendChild(iconContainer)
   }
 

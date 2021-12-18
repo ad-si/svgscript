@@ -17,7 +17,7 @@
     "build": "rollup --config",
     "start": "node source/server.js",
     "lint": "eslint --max-warnings=0 --ignore-path=.gitignore .",
-    "unit-tests": "node tests/main.js && node tests/tools.js",
+    "unit-tests": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "test": "npm run lint && npm run unit-tests"
   },
   "keywords": [
@@ -30,6 +30,9 @@
       "ecmaVersion": 2021,
       "sourceType": "module"
     }
+  },
+  "jest": {
+    "transform": {}
   },
   "dependencies": {
     "browserify": "^17.0.0",
@@ -59,6 +62,7 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.1.1",
     "common-tags": "^1.8.2",
+    "jest": "^27.4.5",
     "rollup": "^2.61.1"
   }
 }

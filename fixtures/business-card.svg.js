@@ -1,10 +1,10 @@
 export default function (options, tools) {
   return tools.shaven(tools.businessCard({
-    side: 'back',
+    side: "back",
     printLayout: true,
     cutView: true,
-    name: 'Thomas Smith',
-    job: 'CEO',
-    email: 'thomas@example.org',
+    name: "Thomas Smith",
+    job: "CEO",
+    email: "thomas@example.org",
   })).rootElement
 }

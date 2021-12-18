@@ -4,8 +4,7 @@ import fs from "fs/promises"
 import rimraf from "rimraf"
 import yaml from "js-yaml"
 import chalk from "chalk"
-import Svgo from "svgo"
-const svgo = new Svgo()
+import svgo from "svgo"
 
 import tools from "./tools/index.js"
 import createIcon from "./createIcon.js"
@@ -40,7 +39,7 @@ export default async (makeFilePaths) => {
 
   console.info("Write Icons:")
 
-  deployment.icons.forEach(async icon => {
+  const writePromises = deployment.icons.map(async icon => {
     if (icon.skip) return
 
     const absoluteIconPath = path.resolve(iconsDirectory, icon.filePath)
@@ -48,7 +47,7 @@ export default async (makeFilePaths) => {
       absoluteIconPath + `?version=${Math.random()}`
     )
 
-    icon.targets.forEach((targetData, index) => {
+    const targetWritePromises = icon.targets.map((targetData, index) => {
       let scale = ""
       let absoluteTargetPath = absoluteIconPath.replace(
         /(\.svg)?\.js$/i,
@@ -89,12 +88,16 @@ export default async (makeFilePaths) => {
           .then(result => result.data)
       }
 
-      svgPromise
+      return svgPromise
         .then(svg => fs.writeFile(absoluteTargetPath, svg))
         .then(() =>
           console.info(` - ${absoluteTargetPath} ${chalk.green("✔")}`),
         )
         .catch(console.error)
     })
+
+    return Promise.all(targetWritePromises)
   })
+
+  return Promise.all(writePromises)
 }

@@ -15,9 +15,8 @@
   },
   "scripts": {
     "build": "rollup --config",
-    "start": "node source/server.js",
     "lint": "eslint --max-warnings=0 --ignore-path=.gitignore .",
-    "unit-tests": "NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "unit-tests": "NODE_OPTIONS=--experimental-vm-modules npx jest --silent",
     "test": "npm run lint && npm run unit-tests"
   },
   "keywords": [
@@ -37,7 +36,7 @@
   "dependencies": {
     "browserify": "^17.0.0",
     "browserify-middleware": "^8.1.1",
-    "chalk": "^5.0.0",
+    "chalk": "^4.1.2",
     "chokidar": "^3.5.2",
     "clean-css": "^5.2.2",
     "clone": "^2.1.2",

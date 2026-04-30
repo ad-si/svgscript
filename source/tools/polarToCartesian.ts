@@ -1,8 +1,11 @@
-/* eslint-disable id-length */
-
 import degToRad from "deg2rad"
 
-export default (centerX, centerY, radius, angleInDegrees) => {
+export default (
+  centerX: number,
+  centerY: number,
+  radius: number,
+  angleInDegrees: number,
+): { x: number; y: number } => {
   const angleInRadians = degToRad(angleInDegrees)
 
   return {

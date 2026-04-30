@@ -1,18 +1,29 @@
-/* eslint-disable id-length */
+interface GenerateCornersOptions {
+  color?: string
+  width?: number
+  height?: number
+  cornerLength?: number
+  margin?: number
+  marginLeft?: number
+  marginTop?: number
+  marginRight?: number
+  marginBottom?: number
+  viewSwitches?: [boolean, boolean, boolean, boolean]
+}
 
-export default (options = {}) => {
+export default (options: GenerateCornersOptions = {}) => {
   const {
     color = "rgb(127, 127, 127)",
     width = 20,
     height = 20,
     cornerLength = 10,
 
-    marginLeft = options.margin || 1,
-    marginTop = options.margin || 1,
-    marginRight = options.margin || 1,
-    marginBottom = options.margin || 1,
+    marginLeft = options.margin ?? 1,
+    marginTop = options.margin ?? 1,
+    marginRight = options.margin ?? 1,
+    marginBottom = options.margin ?? 1,
 
-    viewSwitches = [true, true, true, true],
+    viewSwitches = [true, true, true, true] as [boolean, boolean, boolean, boolean],
   } = options
 
   return ["g.corners",

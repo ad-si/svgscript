@@ -6,15 +6,28 @@ import coordinateSystemAxes from "./tools/coordinateSystemAxes.js"
 import createTransformationString from "./createTransformationString.js"
 
 
-export default (name, iconModule, targetData) => {
-  let content
+export interface IconModule {
+  targetVersion?: string
+  default?: (targetData?: unknown, tools?: unknown) => string
+  shaven?: (targetData?: unknown, tools?: unknown) => unknown[]
+  svg?: (targetData?: unknown, tools?: unknown) => string
+}
+
+export default (
+  name: string,
+  iconModule: IconModule | ((targetData?: unknown, tools?: unknown) => string),
+  targetData?: unknown,
+): string | undefined => {
+  let content: any
 
   if (!iconModule) {
     throw new Error("Module " + name + " was not passed to createIcon().")
   }
 
-  const isSupportedVersion = !iconModule.targetVersion ||
-    semver.lt(iconModule.targetVersion, "0.4.0")
+  const moduleAsObject = iconModule as IconModule
+
+  const isSupportedVersion = !moduleAsObject.targetVersion ||
+    semver.lt(moduleAsObject.targetVersion, "0.4.0")
 
   if (!isSupportedVersion) {
     throw new Error(
@@ -23,8 +36,8 @@ export default (name, iconModule, targetData) => {
     )
   }
 
-  if (typeof iconModule.default === "function") {
-    content = iconModule.default(targetData, tools)
+  if (typeof moduleAsObject.default === "function") {
+    content = moduleAsObject.default(targetData, tools)
     const contentType = typeof content
 
     if (contentType !== "string") {
@@ -33,24 +46,23 @@ export default (name, iconModule, targetData) => {
         `and not a ${contentType}`,
       )
     }
-
   }
-  else if (iconModule.shaven) {
-    if (typeof iconModule.shaven !== "function") {
+  else if (moduleAsObject.shaven) {
+    if (typeof moduleAsObject.shaven !== "function") {
       throw new Error("shaven property must be a function")
     }
-    content = iconModule.shaven(targetData, tools)
+    content = moduleAsObject.shaven(targetData, tools)
 
     if (!Array.isArray(content)) {
       throw new TypeError(name + ".shaven() must return an array!")
     }
 
-    content = createTransformationString(content)
+    content = createTransformationString(content) as unknown[]
     content.push(coordinateSystemAxes)
     content = shaven(content).rootElement
   }
-  else if (iconModule.svg) {
-    content = iconModule.svg(targetData, tools)
+  else if (moduleAsObject.svg) {
+    content = moduleAsObject.svg(targetData, tools)
 
     if (typeof content !== "string") {
       throw new TypeError(name + ".svg() must return a string!")

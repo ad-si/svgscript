@@ -11,7 +11,7 @@ test("make targets as described in YAML file", async () => {
 
   await make([targetsFile])
 
-  async function readSvg (fileName) {
+  async function readSvg (fileName: string): Promise<string> {
     return readFile(
       path.join(examplesDir, fileName),
       { encoding: "utf-8" },

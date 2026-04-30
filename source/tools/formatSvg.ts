@@ -1,5 +1,5 @@
-export default (svgString) => {
-  const missingNamespaces = []
+export default (svgString: string): string | undefined => {
+  const missingNamespaces: string[] = []
 
   if (typeof svgString !== "string") return
 
@@ -11,7 +11,7 @@ export default (svgString) => {
     missingNamespaces
       .push("xmlns:xlink=\"http://www.w3.org/1999/xlink\"")
   }
-  if (missingNamespaces !== []) {
+  if (missingNamespaces.length > 0) {
     svgString = svgString.replace(
       "<svg", "<svg " + missingNamespaces.join(" "),
     )

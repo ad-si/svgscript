@@ -1,8 +1,16 @@
 import polarToCartesian from "./polarToCartesian.js"
 
-export default (options) => {
-  const x = options.x || 0 // eslint-disable-line id-length
-  const y = options.y || 0 // eslint-disable-line id-length
+export interface CircleSectionOptions {
+  x?: number
+  y?: number
+  radius?: number
+  startAngle?: number
+  endAngle?: number
+}
+
+export default (options: CircleSectionOptions): string => {
+  const x = options.x || 0
+  const y = options.y || 0
   const radius = options.radius || 1
   const startAngle = options.startAngle || 0
   const endAngle = options.endAngle || 90

@@ -13,10 +13,21 @@ import * as svgScript from "./index.js"
 import svgScriptServer from "./server.js"
 import formatSvg from "./tools/formatSvg.js"
 import make from "./make.js"
+import {Icon} from "./getIcons.js"
 
 
-function getOptions (args) {
-  const options = {
+interface CliOptions {
+  args: string[]
+  flags: Record<string, string | boolean>
+}
+
+interface CompiledIcon extends Icon {
+  svg?: string
+}
+
+
+function getOptions (args: string[]): CliOptions {
+  const options: CliOptions = {
     args: [],
     flags: {},
   }
@@ -42,7 +53,7 @@ function getOptions (args) {
 }
 
 
-function getUsageString (commandName) {
+function getUsageString (commandName: string): string {
   return `
     Usage: ${commandName} [command] [path-to-file/dir]
 
@@ -62,7 +73,7 @@ function getUsageString (commandName) {
 }
 
 
-async function main (cliArgs) {
+async function main (cliArgs: string[]): Promise<void> {
   const commandName = path.basename(process.argv[1])
   const usageString = getUsageString(commandName)
 
@@ -77,8 +88,8 @@ async function main (cliArgs) {
     .map(arg => path.resolve(process.cwd(), arg))
 
 
-  async function saveIcon (icon) {
-    await fs.writeFile(icon.absoluteFilePath, icon.svg)
+  async function saveIcon (icon: CompiledIcon): Promise<void> {
+    await fs.writeFile(icon.absoluteFilePath, icon.svg ?? "")
 
     console.info(
       chalk.green("Created",
@@ -88,25 +99,34 @@ async function main (cliArgs) {
   }
 
 
-  function compileIcon (icon) {
+  function compileIcon (icon: Icon): CompiledIcon | undefined {
     if (!icon.content) return
 
-    icon.svg = flags.beautify
+    const compiled = icon as CompiledIcon
+
+    compiled.svg = flags.beautify
       ? formatSvg(icon.content)
-      : beautifyHtml(formatSvg(icon.content))
+      : beautifyHtml(formatSvg(icon.content) ?? "")
 
-    if (!/\n$/.test(icon.svg)) icon.svg += "\n"
+    if (compiled.svg && !/\n$/.test(compiled.svg)) compiled.svg += "\n"
 
-    return icon
+    return compiled
   }
 
 
-  async function compileAndWriteIcon (iconPaths, iconOptions) {
-    const graphics = await svgScript
-      .getIcons(iconPaths, iconOptions)
+  async function compileAndWriteIcon (
+    iconPaths: string[] | string,
+    iconOptions: unknown,
+  ): Promise<void> {
+    const paths = Array.isArray(iconPaths) ? iconPaths : [iconPaths]
+    const graphics = await svgScript.getIcons(paths, iconOptions)
 
     if (graphics.length === 1) {
-      saveIcon(compileIcon(graphics[0].value))
+      const settled = graphics[0]
+      if (settled.status === "fulfilled" && settled.value) {
+        const compiled = compileIcon(settled.value)
+        if (compiled) await saveIcon(compiled)
+      }
     }
     else {
       throw new Error(
@@ -116,25 +136,31 @@ async function main (cliArgs) {
   }
 
 
-  async function compileAndWriteIcons (iconPaths, iconOptions) {
-    const icons = await svgScript
-      .getIcons(iconPaths, iconOptions)
+  async function compileAndWriteIcons (
+    iconPaths: string[],
+    iconOptions: unknown,
+  ): Promise<void> {
+    const icons = await svgScript.getIcons(iconPaths, iconOptions)
 
     await Promise.allSettled(
       icons
-        .filter(settledProm => settledProm.status === "fulfilled")
-        .map(icon => icon.value)
+        .filter(
+          (settled): settled is PromiseFulfilledResult<Icon> =>
+            settled.status === "fulfilled" && settled.value !== undefined,
+        )
+        .map(settled => settled.value)
         .map(compileIcon)
+        .filter((icon): icon is CompiledIcon => icon !== undefined)
         .map(saveIcon),
     )
   }
 
 
   if (args[0] === "compile") {
-    let iconOptions = {}
+    let iconOptions: unknown = {}
 
     try {
-      if (flags.options) {
+      if (typeof flags.options === "string") {
         iconOptions = yaml.load(flags.options)
       }
     }
@@ -144,22 +170,24 @@ async function main (cliArgs) {
     }
 
     const icons = await svgScript.getIcons(absoluteIconPaths, iconOptions)
-
-    console.info(icons[0].value.content)
+    const first = icons[0]
+    if (first.status === "fulfilled" && first.value) {
+      console.info(first.value.content)
+    }
   }
   else if (args[0] === "compile-in-place") {
-    let iconOptions = {}
+    let iconOptions: unknown = {}
 
-    if (flags.options) {
+    if (typeof flags.options === "string") {
       iconOptions = yaml.load(flags.options)
     }
 
     await compileAndWriteIcons(absoluteIconPaths, iconOptions)
   }
   else if (args[0] === "watch") {
-    let iconOptions = {}
+    let iconOptions: unknown = {}
 
-    if (flags.options) {
+    if (typeof flags.options === "string") {
       iconOptions = yaml.load(flags.options)
     }
 
@@ -179,10 +207,10 @@ async function main (cliArgs) {
       })
   }
   else if (args[0] === "make") {
-    make(absoluteIconPaths)
+    await make(absoluteIconPaths)
   }
   else if (args[0] === "serve") {
-    svgScriptServer(absoluteIconPaths)
+    await svgScriptServer(absoluteIconPaths)
   }
   else {
     console.error(usageString)

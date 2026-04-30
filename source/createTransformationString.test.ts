@@ -1,5 +1,3 @@
-/* eslint-disable id-length */
-
 import createTransformationString from "./createTransformationString.js"
 import {test, expect} from "@jest/globals"
 

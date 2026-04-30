@@ -1,7 +1,5 @@
-/* eslint-disable no-spaced-func, indent, no-unexpected-multiline */
-
-import S from "sanctuary"  // eslint-disable-line id-length
-import $ from "sanctuary-def"  // eslint-disable-line id-length
+import S from "sanctuary"
+import $ from "sanctuary-def"
 import {channelNormalize} from "./utils.js"
 
 const def = $.create({
@@ -13,7 +11,7 @@ const def = $.create({
 const rgbCurried = def("rgb")
   ({})
   ([$.ValidNumber, $.ValidNumber, $.ValidNumber, $.String])
-  (red => green => blue => {
+  ((red: number) => (green: number) => (blue: number) => {
     const redNew = channelNormalize(red)
     const greenNew = channelNormalize(green)
     const blueNew = channelNormalize(blue)
@@ -28,7 +26,11 @@ const rgbCurried = def("rgb")
   })
 
 
-export default function (red, green, blue) {
+export default function rgb (
+  red: number,
+  green: number,
+  blue: number,
+): string {
   if (arguments.length !== 3) {
     throw new Error(`Expected 3 arguments, not ${arguments.length}`)
   }

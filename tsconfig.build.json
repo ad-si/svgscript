@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./source"
+  },
+  "include": ["source/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "public/scripts/bundle.js",
+    "source/**/*.test.ts",
+    "fixtures"
+  ]
+}

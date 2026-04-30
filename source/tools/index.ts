@@ -15,20 +15,20 @@ import arrangeAsGrid from "./arrangeAsGrid.js"
 import businessCard from "./businessCard.js"
 
 
-function optimizePath (path) {
+function optimizePath (path: string): string {
   return new SvgPath(path)
     .round(0)
     .toString()
 }
 
-function optimizePathAbsolute (path) {
+function optimizePathAbsolute (path: string): string {
   return new SvgPath(path)
     .abs()
     .round(0)
     .toString()
 }
 
-function optimizePathRelative (path) {
+function optimizePathRelative (path: string): string {
   return new SvgPath(path)
     .abs()
     .round(0)
@@ -37,11 +37,17 @@ function optimizePathRelative (path) {
     .toString()
 }
 
-function cssobjToCss (options = {}) {
+interface CssobjToCssOptions {
+  styleObject?: unknown
+  minified?: boolean
+  indentation?: string
+  endOfLine?: string
+}
+
+function cssobjToCss (options: CssobjToCssOptions = {}): string {
   const {
     styleObject,
     minified,
-    // scoped,
   } = options
   let {
     indentation = "  ",
@@ -54,7 +60,7 @@ function cssobjToCss (options = {}) {
   }
 
   const getInstance = cssobjCore({
-    plugins: [ // Order is important
+    plugins: [
       cssobjPluginGencss({
         indent: indentation,
         newLine: endOfLine,

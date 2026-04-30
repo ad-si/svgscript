@@ -1,5 +1,7 @@
 /build
 /cache
+/dist
 /examples/*.svg
 /icons
+/public/scripts/.tsbuild
 /public/scripts/bundle.js

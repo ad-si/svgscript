@@ -1,6 +1,4 @@
-/* eslint-disable id-length */
-
-const gridFragment = ["g#grid",
+const gridFragment: unknown[] = ["g#grid",
   {
     style: {
       fill: "rgb(255, 255, 200)",
@@ -22,9 +20,8 @@ const gridFragment = ["g#grid",
   }],
 ]
 
-const lines = []
+const lines: unknown[] = []
 for (let lineIndex = 0; lineIndex < 200; lineIndex++) {
-  // Horizontal line
   lines.push(
     ["use", {
       "xlink:href": "#horizontal",
@@ -32,7 +29,6 @@ for (let lineIndex = 0; lineIndex < 200; lineIndex++) {
       y: -100 + lineIndex,
     }],
   )
-  // Vertical line
   lines.push(
     ["use", {
       "xlink:href": "#vertical",

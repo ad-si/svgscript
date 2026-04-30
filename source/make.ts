@@ -4,13 +4,32 @@ import fs from "fs/promises"
 import rimraf from "rimraf"
 import yaml from "js-yaml"
 import chalk from "chalk"
-import svgo from "svgo"
+import * as svgo from "svgo"
 
 import tools from "./tools/index.js"
-import createIcon from "./createIcon.js"
+import createIcon, {IconModule} from "./createIcon.js"
 
 
-export default async (makeFilePaths) => {
+interface TargetData {
+  fileName?: string
+  filePath?: string
+  scale?: number
+  minify?: boolean
+  [key: string]: unknown
+}
+
+interface IconEntry {
+  filePath: string
+  fileName?: string
+  skip?: boolean
+  targets: TargetData[]
+}
+
+interface MakeFile {
+  icons: IconEntry[]
+}
+
+export default async (makeFilePaths: string[]) => {
 
   if (makeFilePaths.length !== 1) {
     throw new Error("SvgScript currently only accepts 1 file or dir path")
@@ -19,23 +38,25 @@ export default async (makeFilePaths) => {
   const makeFilePath = makeFilePaths[0]
 
   const iconsDirectory = path.dirname(makeFilePath)
-  let fileContent
-  let deployment
+  let fileContent: Buffer | undefined
+  let deployment: MakeFile | undefined
 
-  // Remove build folder
   rimraf.sync(path.join(path.dirname(makeFilePath), "build"))
 
   try {
     fileContent = await fs.readFile(makeFilePath)
-    deployment = yaml.load(fileContent)
+    deployment = yaml.load(fileContent.toString()) as MakeFile
   }
   catch (error) {
-    if (error.code === "EISDIR") {
+    const err = error as NodeJS.ErrnoException
+    if (err.code === "EISDIR") {
       console.error("File must be a valid YAML file")
       process.exit(1)
     }
-    if (error.code !== "ENOENT") throw error
+    if (err.code !== "ENOENT") throw error
   }
+
+  if (!deployment) return
 
   console.info("Write Icons:")
 
@@ -45,7 +66,7 @@ export default async (makeFilePaths) => {
     const absoluteIconPath = path.resolve(iconsDirectory, icon.filePath)
     const iconModule = await import(
       absoluteIconPath + `?version=${Math.random()}`
-    )
+    ) as IconModule
 
     const targetWritePromises = icon.targets.map((targetData, index) => {
       let scale = ""
@@ -58,15 +79,18 @@ export default async (makeFilePaths) => {
         absoluteTargetPath = path.join(
           absoluteTargetPath
             .slice(0, -path.basename(absoluteTargetPath).length),
-          targetData.fileName,
+          targetData.fileName!,
         )
       }
 
       if (Object.prototype.hasOwnProperty.call(targetData, "filePath")) {
-        absoluteTargetPath = path.resolve(iconsDirectory, targetData.filePath)
+        absoluteTargetPath = path.resolve(
+          iconsDirectory,
+          targetData.filePath!,
+        )
       }
 
-      if (targetData.scale > 0) {
+      if (targetData.scale && targetData.scale > 0) {
         scale = "@" + targetData.scale + "x"
         absoluteTargetPath = absoluteTargetPath.replace(
           /\.svg$/i,
@@ -74,22 +98,22 @@ export default async (makeFilePaths) => {
         )
       }
 
-      let svgPromise = Promise.resolve(
+      let svgPromise: Promise<string | undefined> = Promise.resolve(
         tools.formatSvg(createIcon(
-          icon.fileName,
+          icon.fileName ?? icon.filePath,
           iconModule,
           targetData,
-        )),
+        ) as string),
       )
 
       if (targetData.minify) {
         svgPromise = svgPromise
-          .then(svg => svgo.optimize(svg))
-          .then(result => result.data)
+          .then(svg => svgo.optimize(svg as string))
+          .then((result: any) => result.data)
       }
 
       return svgPromise
-        .then(svg => fs.writeFile(absoluteTargetPath, svg))
+        .then(svg => fs.writeFile(absoluteTargetPath, svg as string))
         .then(() =>
           console.info(` - ${absoluteTargetPath} ${chalk.green("✔")}`),
         )

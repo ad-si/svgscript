@@ -3,8 +3,14 @@ import clone from "clone"
 import generateCorners from "./generateCorners.js"
 
 
-function orthoLine (options = {}) {
-  // eslint-disable-next-line id-length
+interface OrthoLineOptions {
+  x?: number
+  y?: number
+  h?: number
+  v?: number
+}
+
+function orthoLine (options: OrthoLineOptions = {}) {
   const {x = 0, y = 0, h = 0, v = 0} = options
   return ["line", {
     x1: x,
@@ -14,7 +20,36 @@ function orthoLine (options = {}) {
   }]
 }
 
-export default (printOptions = {}) => {
+export interface ArrangeAsGridOptions {
+  backgroundColor?: string | false
+  cellWidth?: number
+  cellHeight?: number
+  cellMargin?: number
+  cellMarginTop?: number
+  cellMarginRight?: number
+  cellMarginBottom?: number
+  cellMarginLeft?: number
+  gridMargin?: number
+  gridMarginTop?: number
+  gridMarginRight?: number
+  gridMarginBottom?: number
+  gridMarginLeft?: number
+  columns?: number
+  rows?: number
+  graphic?: unknown[]
+  id?: string
+  cx?: number
+  cy?: number
+  cutView?: boolean
+  cutMarkLength?: number
+  cutMarkColor?: string
+  cutMarkWidth?: number
+  firstCutDirection?: "x" | "y"
+  cornerView?: boolean
+  innerCorners?: boolean
+}
+
+export default (printOptions: ArrangeAsGridOptions = {}) => {
   if (printOptions.cutView) {
     printOptions.gridMargin = 0
     printOptions.cellMargin = 0
@@ -29,7 +64,6 @@ export default (printOptions = {}) => {
     cellMarginRight = printOptions.cellMargin || 0,
     cellMarginBottom = printOptions.cellMargin || 0,
     cellMarginLeft = printOptions.cellMargin || 0,
-    // TODO: marginCollapse = false,
 
     gridMarginTop = printOptions.gridMargin || 0,
     gridMarginRight = printOptions.gridMargin || 0,
@@ -62,10 +96,8 @@ export default (printOptions = {}) => {
   const totalCellWidth = cellMarginLeft + cellWidth + cellMarginRight
   const totalCellHeight = cellMarginTop + cellHeight + cellMarginBottom
 
-  const gridCells = []
-  const cutMarks = []
-
-  /* eslint-disable id-length */
+  const gridCells: unknown[] = []
+  const cutMarks: unknown[] = []
 
   for (let row = 0; row < rows; row++) {
     for (let column = 0; column < columns; column++) {
@@ -78,7 +110,7 @@ export default (printOptions = {}) => {
       const isFirstRow = row === 0
       const isFirstColumn = column === 0
 
-      const gridCell = ["g",
+      const gridCell: unknown[] = ["g",
         {
           transform: [{
             type: "translate",
@@ -98,9 +130,7 @@ export default (printOptions = {}) => {
           marginBottom: cellMarginBottom,
           viewSwitches: !innerCorners
             ? [
-              // Display only in first column & first row
               innerCorners || isFirstColumn || isFirstRow,
-              // Display only in last column & first row
               innerCorners || isLastColumn || isFirstRow,
               innerCorners || isLastColumn || isLastRow,
               innerCorners || isFirstColumn || isLastRow,
@@ -112,27 +142,22 @@ export default (printOptions = {}) => {
       if (cutView) {
         const play = 1
         if (firstCutDirection === "y") {
-          // Horizontal marks
-          // Left
           cutMarks.push(orthoLine({
             x: topLeftCornerX,
             y: topLeftCornerY,
             h: cutMarkLength / 2,
           }))
-          // Right
           cutMarks.push(orthoLine({
             x: topLeftCornerX + totalCellWidth,
             y: topLeftCornerY,
             h: - cutMarkLength / 2,
           }))
           if (isLastRow) {
-            // Left
             cutMarks.push(orthoLine({
               x: topLeftCornerX,
               y: topLeftCornerY + totalCellHeight,
               h: cutMarkLength / 2,
             }))
-            // Right
             cutMarks.push(orthoLine({
               x: topLeftCornerX + totalCellWidth,
               y: topLeftCornerY + totalCellHeight,
@@ -140,8 +165,6 @@ export default (printOptions = {}) => {
             }))
           }
 
-          // Vertical marks
-          // Top
           if (isFirstRow) {
             cutMarks.push(orthoLine({
               x: topLeftCornerX,
@@ -156,7 +179,6 @@ export default (printOptions = {}) => {
               }))
             }
           }
-          // Bottom
           if (isLastRow) {
             cutMarks.push(orthoLine({
               x: topLeftCornerX,
@@ -174,27 +196,22 @@ export default (printOptions = {}) => {
         }
 
         if (firstCutDirection === "x") {
-          // Veritcal Marks
-          // Top
           cutMarks.push(orthoLine({
             x: topLeftCornerX,
             y: topLeftCornerY,
             v: cutMarkLength / 2,
           }))
-          // Bottom
           cutMarks.push(orthoLine({
             x: topLeftCornerX,
             y: topLeftCornerY + totalCellHeight,
             v: - cutMarkLength / 2,
           }))
           if (isLastColumn) {
-            // Top
             cutMarks.push(orthoLine({
               x: topLeftCornerX + totalCellWidth,
               y: topLeftCornerY,
               v: cutMarkLength / 2,
             }))
-            // Bottom
             cutMarks.push(orthoLine({
               x: topLeftCornerX + totalCellWidth,
               y: topLeftCornerY + totalCellHeight,
@@ -202,8 +219,6 @@ export default (printOptions = {}) => {
             }))
           }
 
-          // Horizontal marks
-          // Left
           if (isFirstColumn) {
             cutMarks.push(orthoLine({
               x: topLeftCornerX - play,
@@ -218,7 +233,6 @@ export default (printOptions = {}) => {
               }))
             }
           }
-          // Right
           if (isLastColumn) {
             cutMarks.push(orthoLine({
               x: topLeftCornerX + totalCellWidth + play,
@@ -242,14 +256,14 @@ export default (printOptions = {}) => {
     }
   }
 
-  const grid = ["g.grid",
+  const grid: unknown[] = ["g.grid",
     {
       id,
       transform: cx || cy
         ? [{
           type: "translate",
-          x: (cx - (totalGridWidth / 2)) || 0,
-          y: (cy - (totalGridHeight / 2)) || 0,
+          x: ((cx ?? 0) - (totalGridWidth / 2)) || 0,
+          y: ((cy ?? 0) - (totalGridHeight / 2)) || 0,
         }]
         : false,
     },

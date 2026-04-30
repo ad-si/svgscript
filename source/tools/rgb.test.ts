@@ -17,11 +17,11 @@ test("overflow", () => {
 })
 
 test("invalid values", () => {
-  expect(() => rgb("25", "35", "16"))
+  expect(() => rgb("25" as unknown as number, "35" as unknown as number, "16" as unknown as number))
     .toThrow(/Invalid value/)
 })
 
 test("too many values", () => {
-  expect(() => rgb(25, 35, 16, 53))
+  expect(() => (rgb as (...args: unknown[]) => unknown)(25, 35, 16, 53))
     .toThrow(/Expected 3 arguments, not 4/)
 })

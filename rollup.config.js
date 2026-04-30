@@ -1,11 +1,16 @@
 import { nodeResolve } from "@rollup/plugin-node-resolve"
+import typescript from "@rollup/plugin-typescript"
 
 export default {
-  input: "./public/scripts/index.js",
+  input: "./public/scripts/index.ts",
   output: {
     file: "./public/scripts/bundle.js",
     format: "iife",
   },
-  // external: ['assert'],
-  plugins: [nodeResolve()],
+  plugins: [
+    nodeResolve(),
+    typescript({
+      tsconfig: "./tsconfig.rollup.json",
+    }),
+  ],
 }

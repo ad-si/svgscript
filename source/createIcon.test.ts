@@ -34,7 +34,7 @@ test("create basic icon", () => {
       </path>
     </svg>
   `
-  const actualSvg = createIcon("test", basicIcon)
+  const actualSvg = createIcon("test", basicIcon) ?? ""
 
   expect(actualSvg.replaceAll(" ", ""))
     .toBe(expectedSvg.replaceAll(" ", ""))
@@ -152,7 +152,7 @@ test("create business card icon", () => {
   `
 
   expect(
-    createIcon("businessCard", businessCard)
+    (createIcon("businessCard", businessCard) ?? "")
       .replace(/\s/g, ""),
   )
     .toBe(expectedSvg.replace(/\s/g, ""))

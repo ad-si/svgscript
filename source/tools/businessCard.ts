@@ -1,10 +1,25 @@
-/* eslint-disable id-length */
-
 import rgb from "./rgb.js"
 import arrangeAsGrid from "./arrangeAsGrid.js"
 
 
-export default (options = {}) => {
+export interface BusinessCardOptions {
+  a4Width?: number
+  a4Height?: number
+  cardWidth?: number
+  cardHeight?: number
+  unit?: string
+  fontSize?: number
+  side?: "front" | "back"
+  printLayout?: boolean
+  cutView?: boolean
+  showBackground?: boolean
+  name?: string
+  job?: string
+  email?: string
+  cardGraphic?: unknown[]
+}
+
+export default (options: BusinessCardOptions = {}) => {
   const {
     a4Width = 210,
     a4Height = 297,
@@ -12,7 +27,7 @@ export default (options = {}) => {
     cardHeight = 55,
     unit = "mm",
     fontSize = 4,
-    side = "front", // front or back
+    side = "front",
     printLayout = false,
     cutView = false,
     showBackground = false,
@@ -66,7 +81,7 @@ export default (options = {}) => {
     ],
   } = options
 
-  let svgDom = []
+  let svgDom: unknown[] = []
   const svgStyle = ["style",
     `text {
       fill: rgb(60, 60, 60);
@@ -86,7 +101,6 @@ export default (options = {}) => {
       backgroundColor: rgb(200, 200, 200),
       graphic: ["use.card", {"xlink:href": "#card"}],
       cutView,
-      cornerLength: 2,
     })
 
     svgDom = ["svg",

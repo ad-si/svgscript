@@ -1,11 +1,21 @@
 import fs from "fs/promises"
 import path from "path"
 
-import createIcon from "./createIcon.js"
+import createIcon, {IconModule} from "./createIcon.js"
 
 
-export default async function (absoluteIconsDirectoryPaths, iconOptions) {
-  let fileNames
+export interface Icon {
+  relativeFilePath: string
+  directoryName: string
+  absoluteFilePath: string
+  content: string | undefined
+}
+
+export default async function (
+  absoluteIconsDirectoryPaths: string[],
+  iconOptions?: unknown,
+): Promise<PromiseSettledResult<Icon | undefined>[]> {
+  let fileNames: string[]
 
   if (absoluteIconsDirectoryPaths.length !== 1) {
     throw new Error("SvgScript currently only accepts 1 file or dir path")
@@ -36,7 +46,9 @@ export default async function (absoluteIconsDirectoryPaths, iconOptions) {
       name += /.*\.svg$/.test(name) ? "" : ".svg"
 
       try {
-        const iconModule = await import(iconPath + `?version=${Math.random()}`)
+        const iconModule = await import(
+          iconPath + `?version=${Math.random()}`
+        ) as IconModule
 
         return {
           relativeFilePath: name,
@@ -46,7 +58,8 @@ export default async function (absoluteIconsDirectoryPaths, iconOptions) {
         }
       }
       catch (error) {
-        console.error(error.stack)
+        console.error((error as Error).stack)
+        return undefined
       }
     }))
 }

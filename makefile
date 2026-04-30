@@ -9,7 +9,8 @@ node_modules: package.json package-lock.json
 
 .PHONY: build
 build: node_modules
-	npx tsc -p tsconfig.build.json && rollup --config
+	npx tsc -p tsconfig.build.json
+	npx rollup --config
 
 
 .PHONY: build-browser

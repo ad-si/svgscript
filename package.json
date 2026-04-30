@@ -16,9 +16,14 @@
   },
   "files": [
     "dist",
-    "public",
+    "public/index.html",
+    "public/styles",
+    "public/scripts/bundle.js",
     "index.mustache"
   ],
+  "scripts": {
+    "prepublishOnly": "make build"
+  },
   "keywords": [
     "svg"
   ],

@@ -13,8 +13,8 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Run tests
-        run: npm test
+        run: make test
+
+      - name: Build
+        run: make build

@@ -27,7 +27,7 @@ lint: node_modules
 	npx tsc --noEmit
 
 
-.PHONY: unitt
+.PHONY: unit-tests
 unit-tests: node_modules
 	NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' \
 	npx jest --silent

@@ -19,14 +19,6 @@
     "public",
     "index.mustache"
   ],
-  "scripts": {
-    "build": "tsc -p tsconfig.build.json && rollup --config",
-    "build:browser": "rollup --config",
-    "typecheck": "tsc --noEmit",
-    "lint": "tsc --noEmit",
-    "unit-tests": "NODE_OPTIONS=--experimental-vm-modules jest --silent",
-    "test": "npm run typecheck && npm run unit-tests"
-  },
   "keywords": [
     "svg"
   ],

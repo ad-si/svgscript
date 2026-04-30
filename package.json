@@ -70,7 +70,7 @@
     "traverse": "^0.6.6"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^13.1.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/clean-css": "^4.2.11",
     "@types/clone": "^2.1.4",
